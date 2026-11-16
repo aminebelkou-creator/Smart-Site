@@ -58,11 +58,30 @@ const nextConfig = {
     quietDeps: true,
     silenceDeprecations: ["import", "global-builtin", "legacy-js-api"],
   },
-  // EdgeOne Makers' free builder has a 6 GB container limit with ~2 GB already
-  // used by the repo in /dev/shm: keep build parallelism low there.
-  ...(process.env.SMARTSITE_DEPLOY_TARGET === "edgeone" &&
-  process.env.SMARTSITE_LOW_MEMORY_BUILD !== "false"
-    ? { experimental: { cpus: 1, workerThreads: false } }
+  ...(process.env.SMARTSITE_DEPLOY_TARGET === "edgeone"
+    ? {
+        experimental: {
+          // EdgeOne SSR Cloud Functions are limited to 128 MiB: no server source maps.
+          serverSourceMaps: false,
+          // The Makers free builder has a 6 GB container with ~2 GB used by the
+          // repo in /dev/shm: keep build parallelism low there.
+          ...(process.env.SMARTSITE_LOW_MEMORY_BUILD !== "false"
+            ? { cpus: 1, workerThreads: false }
+            : {}),
+        },
+        // Files traced into the server bundle that are never used at runtime.
+        outputFileTracingExcludes: {
+          "*": [
+            "**/node_modules/typescript/**",
+            "**/node_modules/@img/sharp-libvips-linuxmusl-*/**",
+            "**/node_modules/@img/sharp-linuxmusl-*/**",
+            "**/*.map",
+            "**/*.d.ts",
+            "**/*.d.mts",
+            "**/*.d.cts",
+          ],
+        },
+      }
     : {}),
   outputFileTracingRoot: projectRoot,
   turbopack: {

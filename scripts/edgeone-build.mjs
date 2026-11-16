@@ -92,11 +92,14 @@ function reportServerTrace() {
       if (!stat.isFile()) continue
       const real = realpathSync(file)
       const match = real.match(/node_modules\/(?:\.pnpm\/[^/]+\/node_modules\/)?((?:@[^/]+\/)?[^/]+)/)
-      const name = match ? match[1] : "(app)"
+      const relative = path.relative(root, real)
+      const name = match
+        ? match[1]
+        : `(app) ${relative.split(path.sep).slice(0, 3).join("/")}${real.endsWith(".map") ? " [.map]" : ""}`
       byPackage.set(name, (byPackage.get(name) || 0) + stat.size)
       total += stat.size
     }
-    const top = [...byPackage.entries()].sort((a, b) => b[1] - a[1]).slice(0, 30)
+    const top = [...byPackage.entries()].sort((a, b) => b[1] - a[1]).slice(0, 40)
     console.log(`[smartsite] traced server files: ${files.size}, ${mb(total)} MB total`)
     for (const [name, size] of top) console.log(`[smartsite]   ${String(mb(size)).padStart(5)} MB  ${name}`)
   } catch (error) {

@@ -78,9 +78,14 @@ const nextConfig = {
         // Files traced into the server bundle that are never used at runtime.
         outputFileTracingExcludes: {
           "*": [
-            // typescript is materialized into .next/node_modules by
-            // scripts/edgeone-build.mjs (runtime files only), not traced here.
-            "**/node_modules/typescript/**",
+            // Keep typescript traced: @payloadcms/plugin-mcp imports it at server start.
+            "**/node_modules/typescript/lib/*.d.ts",
+            "**/node_modules/typescript/lib/tsserver*.js",
+            "**/node_modules/typescript/lib/_tsserver.js",
+            "**/node_modules/typescript/lib/_typingsInstaller.js",
+            "**/node_modules/typescript/lib/typingsInstaller.js",
+            "**/node_modules/typescript/lib/watchGuard.js",
+            "**/node_modules/typescript/lib/*/diagnosticMessages.generated.json",
             ...(IMAGE_PROCESSING === "off"
               ? ["**/node_modules/sharp/**", "**/node_modules/@img/**"]
               : []),

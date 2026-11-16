@@ -12,7 +12,11 @@ const NEXT_PUBLIC_URL = process.env.NEXT_PUBLIC_URL || "http://localhost:3000"
 const IMAGE_PROCESSING = process.env.SMARTSITE_IMAGE_PROCESSING === "off" ? "off" : "sharp"
 const SHARP_STUB = "./src/payload/sharp-stub.ts"
 const EDGEONE = process.env.SMARTSITE_DEPLOY_TARGET === "edgeone"
-const TYPESCRIPT_STUB = "./src/payload/typescript-stub.ts"
+// @payloadcms/plugin-mcp imports typescript (ts.transpileModule) at server start.
+// Turbopack externalizes it under a hashed alias that EdgeOne's packaging drops, so
+// on EdgeOne point it at the compiler file itself: one ~9 MB bundled file instead of
+// a missing external (and the 19 MB package folder stays out of the trace).
+const TYPESCRIPT_FILE = "./node_modules/typescript/lib/typescript.js"
 
 // The project owns its build graph, including when developed inside a workspace.
 const projectRoot = path.dirname(fileURLToPath(import.meta.url))
@@ -80,7 +84,7 @@ const nextConfig = {
         // Files traced into the server bundle that are never used at runtime.
         outputFileTracingExcludes: {
           "*": [
-            // typescript is aliased to a stub on EdgeOne (see TYPESCRIPT_STUB).
+            // typescript is bundled from TYPESCRIPT_FILE on EdgeOne.
             "**/node_modules/typescript/**",
             ...(IMAGE_PROCESSING === "off"
               ? ["**/node_modules/sharp/**", "**/node_modules/@img/**"]
@@ -100,9 +104,7 @@ const nextConfig = {
     root: projectRoot,
     resolveAlias: {
       ...(IMAGE_PROCESSING === "off" ? { sharp: SHARP_STUB } : {}),
-      // A dependency imports typescript at server start; on EdgeOne the hashed
-      // Turbopack external for it is not packaged, so bundle a stub instead.
-      ...(EDGEONE ? { typescript: TYPESCRIPT_STUB } : {}),
+      ...(EDGEONE ? { typescript: TYPESCRIPT_FILE } : {}),
     },
     resolveExtensions: [".mdx", ".tsx", ".ts", ".jsx", ".js", ".mjs", ".json"],
     rules: {
@@ -132,7 +134,7 @@ const nextConfig = {
             ...(IMAGE_PROCESSING === "off"
               ? { sharp$: path.resolve(projectRoot, SHARP_STUB) }
               : {}),
-            ...(EDGEONE ? { typescript$: path.resolve(projectRoot, TYPESCRIPT_STUB) } : {}),
+            ...(EDGEONE ? { typescript$: path.resolve(projectRoot, TYPESCRIPT_FILE) } : {}),
           }
           return config
         },

@@ -92,7 +92,7 @@ export function ContentComponent(props: ContentBlock & { mapQuery?: string | nul
   } = props
 
   const mapSrc = mapQuery?.trim()
-    ? `https://www.google.com/maps?q=${encodeURIComponent(mapQuery.trim())}&output=embed`
+    ? `https://www.google.com/maps?q=${encodeURIComponent(mapQuery.trim())}&z=16&output=embed`
     : null
   const hasMedia = Boolean(mapSrc || (showMedia && media))
   const requestedLayout = layout ?? "stacked"

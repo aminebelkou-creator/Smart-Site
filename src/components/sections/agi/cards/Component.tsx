@@ -56,9 +56,10 @@ export function CardsComponent(props: CardsBlockProps) {
               <li key={card.id ?? index} className="agi-card agi-logo" title={card.title}>
                 {card.image && typeof card.image === "object" ? (
                   <Media resource={card.image} className="agi-logo__img" imgClassName="h-full w-full object-contain" />
-                ) : (
-                  <span className="agi-logo__text">{card.title}</span>
-                )}
+                ) : null}
+                <span className={card.image && typeof card.image === "object" ? "agi-logo__name" : "agi-logo__text"}>
+                  {card.title}
+                </span>
                 {card.text ? <span className="agi-logo__caption">{card.text}</span> : null}
               </li>
             ) : (

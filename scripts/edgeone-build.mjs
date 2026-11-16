@@ -8,7 +8,7 @@ import path from "node:path"
 import os from "node:os"
 
 const mb = bytes => Math.round(bytes / 2 ** 20)
-const heap = process.env.SMARTSITE_BUILD_HEAP_MB || "2560"
+const heap = process.env.SMARTSITE_BUILD_HEAP_MB || "2048"
 const bundler = process.env.SMARTSITE_BUNDLER === "webpack" ? ["--webpack"] : []
 
 function cgroupMemory() {
@@ -43,8 +43,8 @@ const child = spawn("next", ["build", ...bundler], {
     SMARTSITE_DEPLOY_TARGET: "edgeone",
     NODE_OPTIONS: `--no-deprecation --max-old-space-size=${heap}`,
     // Fewer native worker threads means less parallel memory in Turbopack.
-    TOKIO_WORKER_THREADS: process.env.TOKIO_WORKER_THREADS || "2",
-    RAYON_NUM_THREADS: process.env.RAYON_NUM_THREADS || "2",
+    TOKIO_WORKER_THREADS: process.env.TOKIO_WORKER_THREADS || "1",
+    RAYON_NUM_THREADS: process.env.RAYON_NUM_THREADS || "1",
   },
 })
 

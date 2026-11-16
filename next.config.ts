@@ -58,6 +58,11 @@ const nextConfig = {
     quietDeps: true,
     silenceDeprecations: ["import", "global-builtin", "legacy-js-api"],
   },
+  // EdgeOne Makers' free builder has a 6 GB container limit with ~2 GB already
+  // used by the repo in /dev/shm: keep build parallelism low there.
+  ...(process.env.SMARTSITE_DEPLOY_TARGET === "edgeone"
+    ? { experimental: { cpus: 1, workerThreads: false } }
+    : {}),
   outputFileTracingRoot: projectRoot,
   turbopack: {
     root: projectRoot,

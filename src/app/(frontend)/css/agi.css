@@ -1,0 +1,161 @@
+/*
+  AGI typography – mirrors the AGI v2 site (site.css + index.html inline styles).
+  Unlayered on purpose so it wins over component and utility defaults.
+  Fonts: Newsreader (headings, light 300) + Inter (body 400).
+*/
+
+:root {
+  --agi-navy: #0a3161;
+  --agi-navy-deep: #061529;
+  --agi-red: #b22234;
+  --agi-gold: #c9a227;
+  --agi-grey: #5b6472;
+}
+
+body {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- headings ---------- */
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-heading);
+  font-feature-settings: normal;
+}
+
+h1 {
+  font-weight: 300;
+  font-size: clamp(42px, 5.4vw, 82px);
+  line-height: 1.03;
+  letter-spacing: -0.012em;
+}
+
+h2 {
+  font-weight: 300;
+  font-size: clamp(30px, 3.6vw, 52px);
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+}
+
+h3 {
+  font-weight: 400;
+  font-size: clamp(21px, 1.8vw, 26px);
+  line-height: 1.25;
+  letter-spacing: 0;
+}
+
+/* Light sections: navy headings, grey body copy (AGI --navy / --grey) */
+section.text-dark :is(h1, h2, h3, h4) {
+  color: var(--agi-navy);
+}
+
+section.text-dark .rich-text > :is(p, ul, ol) {
+  color: var(--agi-grey);
+  font-size: 15px;
+  line-height: 1.75;
+}
+
+section.text-dark .rich-text > :is(p, ul, ol) :is(strong, b) {
+  color: var(--agi-navy);
+  font-weight: 600;
+}
+
+/* Dark (navy) sections: white headings, softened body copy */
+section.text-white .rich-text > :is(p, ul, ol) {
+  color: rgb(255 255 255 / 0.75);
+  font-size: 15px;
+  line-height: 1.75;
+}
+
+section.text-white .rich-text > :is(p, ul, ol) :is(strong, b) {
+  color: #fff;
+  font-weight: 600;
+}
+
+/* Rich-text spacing between a heading and its copy, as on v2 cards */
+.rich-text > h2 + p {
+  margin-top: 0.9em;
+}
+
+.rich-text > h3 {
+  margin-top: 1.6em;
+  margin-bottom: 0.4em;
+}
+
+.rich-text > h3:first-child {
+  margin-top: 0;
+}
+
+/* Italic tags (e.g. "Parents ·", "From the director") read as AGI kickers */
+.rich-text em {
+  font-style: normal;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: var(--agi-red);
+}
+
+section.text-white .rich-text em {
+  color: var(--agi-gold);
+}
+
+/* ---------- hero (AGI home hero) ---------- */
+/* Kicker: the paragraph right before the hero h1 */
+p:has(+ h1) {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: var(--agi-red);
+}
+
+section.text-white p:has(+ h1),
+.text-white p:has(+ h1),
+p.text-white\/80:has(+ h1) {
+  color: var(--agi-gold);
+}
+
+h1.text-white {
+  font-size: clamp(46px, 6vw, 92px);
+  line-height: 1;
+  letter-spacing: -0.015em;
+  max-width: 14ch;
+}
+
+/* <span> inside a heading = AGI gold italic highlight ("close to home.") */
+.text-gradient {
+  font-style: italic;
+  color: var(--agi-gold);
+}
+
+/* Hero supporting text (the lede) */
+h1 + p {
+  font-family: var(--font-body);
+  font-size: clamp(16px, 1.25vw, 18.5px);
+  line-height: 1.65;
+  max-width: 52ch;
+}
+
+h1.text-white + p {
+  color: rgb(255 255 255 / 0.78);
+}
+
+/* ---------- "AGI in numbers" facts band (section id="facts") ---------- */
+#facts h3 {
+  font-weight: 300;
+  font-size: clamp(38px, 4vw, 56px);
+  line-height: 1;
+  color: var(--agi-gold);
+}
+
+#facts .rich-text > p {
+  font-size: 13px;
+  line-height: 1.5;
+}

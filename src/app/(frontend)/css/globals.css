@@ -22,3 +22,6 @@
 @import "./components.css" layer(frontend-components);
 @import "./typography.css" layer(frontend-components);
 @import "./utilities.css";
+
+/* AGI brand typography (unlayered, loaded last) */
+@import "./agi.css";

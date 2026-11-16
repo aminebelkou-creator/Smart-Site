@@ -8,11 +8,13 @@ import LogoPrimary from "@/components/logos/logo"
 import { MobileNavUpdated } from "@/components/header/mobile-nav"
 import { cn } from "@/lib/ui"
 import { getSearchConfig } from "@/lib/features"
+import { cache } from "@/lib/cache"
 
 export async function Header() {
-  const [headerData, settingsData] = await Promise.all([
+  const [headerData, settingsData, uris] = await Promise.all([
     getGlobal("header" as keyof Config["globals"], 1),
     getSettings(),
+    cache.getAllURIs().catch(() => [] as string[]),
   ])
 
   const settings = settingsData as Setting
@@ -32,8 +34,13 @@ export async function Header() {
         >
           <LogoPrimary className="h-logo w-auto" />
         </Link>
-        <HeaderNavigation data={headerData} search={searchConfig} />
-        <MobileNavUpdated data={headerData} settings={settings} search={searchConfig} />
+        <HeaderNavigation data={headerData} search={searchConfig} uris={uris} />
+        <MobileNavUpdated
+          data={headerData}
+          settings={settings}
+          search={searchConfig}
+          uris={uris}
+        />
       </div>
     </header>
   )

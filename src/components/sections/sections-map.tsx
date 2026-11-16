@@ -5,6 +5,10 @@ import { PostsArchiveComponent } from "@/components/sections/posts/archive/Compo
 import { PostsHeroComponent } from "@/components/sections/posts/hero/Component"
 import { PostsContentComponent } from "@/components/sections/posts/content/Component"
 import { PostsRelatedComponent } from "@/components/sections/posts/related/Component"
+import { CardsComponent } from "@/components/sections/agi/cards/Component"
+import { FactsComponent } from "@/components/sections/agi/facts/Component"
+import { TestimonialsListComponent } from "@/components/sections/agi/testimonials/Component"
+import { FaqComponent } from "@/components/sections/agi/faq/Component"
 import React from "react"
 
 /*************************************************************************/
@@ -17,6 +21,10 @@ import React from "react"
 export const sectionsMap: Record<string, React.ComponentType<any>> = {
   hero: HeroComponent,
   content: ContentComponent,
+  cards: CardsComponent,
+  facts: FactsComponent,
+  "testimonials-list": TestimonialsListComponent,
+  faq: FaqComponent,
   "contact-form": ContactFormComponent,
   "posts-archive": PostsArchiveComponent,
   "posts-hero": PostsHeroComponent,

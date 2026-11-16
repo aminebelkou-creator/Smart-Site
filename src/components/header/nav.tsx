@@ -5,6 +5,9 @@ import type { Header as HeaderType } from "@/payload-types"
 import { SearchCommandLauncher } from "@/components/search/search-dialog"
 import { ChevronDown, ChevronRight } from "lucide-react"
 import * as React from "react"
+import { usePathname } from "next/navigation"
+import { localeFromPath, pickLocalized } from "@/lib/locale"
+import { LanguageSwitch } from "@/components/locale/language-switch"
 
 type NavItemLink = NonNullable<HeaderType["navItems"]>[number]["item"]["link"]
 
@@ -26,14 +29,21 @@ type NavigationSearchConfig = {
 interface HeaderNavigationProps {
   data: HeaderType
   search: NavigationSearchConfig
+  uris?: string[]
 }
 
 /****************************************************
  * Header Navigation - Main Navigation Of Website
  ****************************************************/
 
-export const HeaderNavigation: React.FC<HeaderNavigationProps> = ({ data, search }) => {
-  const navItems = data?.navItems || []
+export const HeaderNavigation: React.FC<HeaderNavigationProps> = ({ data, search, uris }) => {
+  const locale = localeFromPath(usePathname())
+  const navItems =
+    pickLocalized<NonNullable<HeaderType["navItems"]>>(
+      data as unknown as Record<string, unknown>,
+      "navItems",
+      locale
+    ) || []
 
   return (
     <nav className="hidden h-full items-center lg:flex">
@@ -44,6 +54,9 @@ export const HeaderNavigation: React.FC<HeaderNavigationProps> = ({ data, search
           }
           return <NavItem key={i} link={item?.link} />
         })}
+        <li className="relative flex h-full items-center">
+          <LanguageSwitch uris={uris} />
+        </li>
         {search.enabled ? (
           <li className="relative flex h-full items-center">
             <SearchCommandLauncher

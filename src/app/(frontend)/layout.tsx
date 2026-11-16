@@ -12,7 +12,9 @@ import site from "@/site.config"
 import { getI18nConfig } from "@/lib/features"
 import { generateRootLayoutMetadata } from "@/app/(frontend)/layout-metadata"
 
-import { Inter, Newsreader } from "next/font/google"
+import { Inter, Newsreader, Noto_Naskh_Arabic } from "next/font/google"
+import { LocaleSync } from "@/components/locale/locale-sync"
+import { LOCALE_HEAD_SCRIPT } from "@/lib/locale"
 
 import "@/app/(frontend)/css/globals.css"
 
@@ -22,6 +24,12 @@ const newsreader = Newsreader({
   weight: ["300", "400", "500"],
   style: ["normal", "italic"],
   variable: "--font-newsreader",
+  display: "swap",
+})
+const notoNaskh = Noto_Naskh_Arabic({
+  subsets: ["arabic"],
+  weight: ["400", "500", "600"],
+  variable: "--font-arabic",
   display: "swap",
 })
 
@@ -53,8 +61,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const bodyEnd = integrations?.bodyEnd
 
   return (
-    <html lang={i18n.defaultLocale} className={`${inter.variable} ${newsreader.variable}`} suppressHydrationWarning>
+    <html lang={i18n.defaultLocale} className={`${inter.variable} ${newsreader.variable} ${notoNaskh.variable}`} suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: LOCALE_HEAD_SCRIPT }} />
         <link href="/favicon.png" rel="icon" type="image/png" />
         {gtmId && <link href="https://www.googletagmanager.com" rel="preconnect" />}
         {gaId && <link href="https://www.google-analytics.com" rel="preconnect" />}
@@ -62,6 +71,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       </head>
 
       <body suppressHydrationWarning>
+        <LocaleSync />
         {gtmId && <GoogleTagManager gtmId={gtmId} />}
         {gaId && <GoogleAnalytics gaId={gaId} />}
 

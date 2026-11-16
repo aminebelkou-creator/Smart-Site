@@ -5,6 +5,7 @@ import { handleURIRedirect } from "@/lib/redirects"
 import { notFound } from "next/navigation"
 import { generateStructuredData } from "@/lib/structured-data"
 import { getSettings } from "@/lib/data/globals"
+import { LOCALE_META, localeFromPath } from "@/lib/locale"
 
 /*************************************************************************/
 /*  TYPES
@@ -34,6 +35,7 @@ export async function SmartSitePublishedURIRenderer({
 
   const { document, uriIndex } = routeResponse
   const collection = uriIndex.sourceCollection
+  const locale = localeFromPath(URI)
 
   let structuredDataJson: string | null = null
 
@@ -48,7 +50,12 @@ export async function SmartSitePublishedURIRenderer({
   }
 
   return (
-    <main data-collection={collection} data-id={document.id}>
+    <main
+      data-collection={collection}
+      data-id={document.id}
+      lang={locale}
+      dir={LOCALE_META[locale].dir}
+    >
       {structuredDataJson && (
         <script
           type="application/ld+json"

@@ -6,6 +6,9 @@ import { SocialLinks } from "@/components/fields/social-links"
 import type { Header as HeaderType, Setting } from "@/payload-types"
 import Link from "next/link"
 import * as React from "react"
+import { usePathname } from "next/navigation"
+import { localeFromPath, pickLocalized } from "@/lib/locale"
+import { LanguageSwitch } from "@/components/locale/language-switch"
 import { Hamburger } from "@/components/header/hamburger"
 import LogoPrimary from "@/components/logos/logo"
 import { SearchCommandLauncher } from "@/components/search/search-dialog"
@@ -23,15 +26,23 @@ interface MobileNavProps {
   data: HeaderType
   settings?: Setting
   search: NavigationSearchConfig
+  uris?: string[]
 }
 
 export const MobileNavUpdated: React.FC<MobileNavProps> = ({
   data,
   settings,
   search,
+  uris,
 }) => {
   const [open, setOpen] = React.useState(false)
-  const navItems = data?.navItems || []
+  const locale = localeFromPath(usePathname())
+  const navItems =
+    pickLocalized<NonNullable<HeaderType["navItems"]>>(
+      data as unknown as Record<string, unknown>,
+      "navItems",
+      locale
+    ) || []
 
   function handleLinkClick() {
     setOpen(false)
@@ -45,7 +56,7 @@ export const MobileNavUpdated: React.FC<MobileNavProps> = ({
     <Sheet open={open} onOpenChange={setOpen}>
       <Hamburger isOpen={open} onClick={handleToggle} />
       <SheetContent
-        side="left"
+        side={locale === "ar" ? "right" : "left"}
         className="smartsite-mobile-menu border-dark-border fixed inset-y-0 left-0 z-[1000] h-full w-[80%] border-r bg-white p-0 lg:hidden"
       >
         <div className="relative flex h-full w-full flex-col overflow-hidden">
@@ -63,6 +74,7 @@ export const MobileNavUpdated: React.FC<MobileNavProps> = ({
               <SheetTitle className="sr-only">Menu</SheetTitle>
 
               <div className="gap-content flex flex-1 flex-col">
+                <LanguageSwitch uris={uris} onNavigate={handleLinkClick} className="text-base" />
                 {search.enabled ? (
                   <SearchCommandLauncher
                     mode={search.mode}
@@ -143,7 +155,7 @@ export const MobileNavUpdated: React.FC<MobileNavProps> = ({
           <div className="border-dark-border px-section-x py-content-lg border-t">
             <div className="gap-content-sm text-dark-600 flex flex-col">
               <SheetDescription className="text-dark-600 text-center text-sm">
-                © {new Date().getFullYear()} smart-site. All rights reserved.
+                © {new Date().getFullYear()} {settings?.general?.siteName || "American Group International"}
               </SheetDescription>
               <SocialLinks
                 socialLinks={settings?.social?.socialLinks || []}

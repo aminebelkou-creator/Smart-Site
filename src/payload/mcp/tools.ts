@@ -2,7 +2,7 @@ import { createHash } from "node:crypto"
 import { APIError } from "payload"
 import type { CollectionSlug, GlobalSlug, PayloadRequest, Field, Where } from "payload"
 import { z } from "zod"
-import sharp from "sharp"
+import { probeImage } from "@/lib/image-probe"
 import { projectContentResponse } from "@/payload/mcp/projection"
 import { withOperation, operationStatus, operationKey } from "@/payload/mcp/operations"
 import { revalidate, revalidateGlobal } from "@/lib/cache"
@@ -479,9 +479,11 @@ export async function uploadMedia(args: Record<string, unknown>, req: PayloadReq
   const bytes = Buffer.from(encoded, "base64")
   if (!bytes.length || bytes.length > 2 * 1024 * 1024)
     throw new APIError("Images must be at most 2 MiB; resize first.", 400)
-  const metadata = await sharp(bytes, { limitInputPixels: 40_000_000 }).metadata()
-  if (!["png", "jpeg", "webp"].includes(metadata.format ?? ""))
-    throw new APIError("Upload a PNG, JPEG or WebP image.", 400)
+  // Header probe (no native dependency): same format and 40 MP checks as before.
+  const metadata = probeImage(bytes)
+  if (!metadata) throw new APIError("Upload a PNG, JPEG or WebP image.", 400)
+  if (!metadata.width || !metadata.height || metadata.width * metadata.height > 40_000_000)
+    throw new APIError("Images must be at most 40 million pixels; resize first.", 400)
   const digest = createHash("sha256").update(bytes).digest("hex")
   const name = `website-${digest}.${metadata.format === "jpeg" ? "jpg" : metadata.format}`
   // Reserve before any filesystem/object-storage effect. A failed transaction

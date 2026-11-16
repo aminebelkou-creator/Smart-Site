@@ -10,6 +10,7 @@ import { CollectionCustomMetadata } from "@/types/icon-types"
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 const mediaDirectory = process.env.SMARTSITE_MEDIA_DIRECTORY
+const imageProcessing = process.env.SMARTSITE_IMAGE_PROCESSING !== "off"
 if (mediaDirectory && !path.isAbsolute(mediaDirectory))
   throw new Error("SMARTSITE_MEDIA_DIRECTORY must be an absolute persistent directory")
 
@@ -54,21 +55,27 @@ export const Media: CollectionConfig = {
   ],
   upload: {
     staticDir: mediaDirectory || path.resolve(dirname, "../../../public/media"),
-    focalPoint: true,
-    adminThumbnail: "thumbnail",
-    formatOptions: { format: "webp", options: { quality: 85 } },
-    imageSizes: [
-      {
-        name: "thumbnail",
-        width: 300,
-        formatOptions: { format: "webp", options: { quality: 75 } },
-      },
-      { name: "square", width: 500, height: 500 },
-      { name: "small", width: 600 },
-      { name: "medium", width: 900 },
-      { name: "large", width: 1400 },
-      { name: "xlarge", width: 1920 },
-      { name: "og", width: 1200, height: 630, crop: "center" },
-    ],
-  },
+    // Without sharp (SMARTSITE_IMAGE_PROCESSING=off) originals are stored as-is and
+    // resized for visitors by Next.js image optimization instead.
+    ...(imageProcessing
+      ? {
+          focalPoint: true,
+          adminThumbnail: "thumbnail",
+          formatOptions: { format: "webp", options: { quality: 85 } } as ImageUploadFormatOptions,
+          imageSizes: [
+            {
+              name: "thumbnail",
+              width: 300,
+              formatOptions: { format: "webp", options: { quality: 75 } } as ImageUploadFormatOptions,
+            },
+            { name: "square", width: 500, height: 500 },
+            { name: "small", width: 600 },
+            { name: "medium", width: 900 },
+            { name: "large", width: 1400 },
+            { name: "xlarge", width: 1920 },
+            { name: "og", width: 1200, height: 630, crop: "center" },
+          ],
+        }
+      : {}),
+  } as UploadConfig,
 }

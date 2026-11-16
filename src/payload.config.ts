@@ -98,7 +98,8 @@ const config = buildConfig({
   jobs,
   secret: process.env.PAYLOAD_SECRET || "",
   serverURL: getServerSideURL(),
-  sharp,
+  // Disabled on hosts that cannot ship the native binary (see next.config.ts).
+  sharp: process.env.SMARTSITE_IMAGE_PROCESSING === "off" ? undefined : sharp,
   onInit: async payload => {
     if (process.env.NODE_ENV !== "production") {
       const banner = [

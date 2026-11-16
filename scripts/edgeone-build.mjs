@@ -32,7 +32,7 @@ function cgroupUsage() {
 
 console.log(
   `[smartsite] node ${process.version}, total ${mb(os.totalmem())} MB, free ${mb(os.freemem())} MB, ` +
-    `cgroup limit ${cgroupMemory()}, cpus ${os.cpus().length}, heap ${heap} MB, bundler ${bundler.length ? "webpack" : "turbopack"}`
+    `cgroup limit ${cgroupMemory()}, cpus ${os.cpus().length}, images ${process.env.SMARTSITE_IMAGE_PROCESSING || "off"}, heap ${heap} MB, bundler ${bundler.length ? "webpack" : "turbopack"}`
 )
 
 const child = spawn("next", ["build", ...bundler], {
@@ -41,6 +41,8 @@ const child = spawn("next", ["build", ...bundler], {
   env: {
     ...process.env,
     SMARTSITE_DEPLOY_TARGET: "edgeone",
+    // Keep sharp/libvips (~35 MB) out of the 128 MiB SSR function by default.
+    SMARTSITE_IMAGE_PROCESSING: process.env.SMARTSITE_IMAGE_PROCESSING || "off",
     NODE_OPTIONS: `--no-deprecation --max-old-space-size=${heap}`,
     // Fewer native worker threads means less parallel memory in Turbopack.
     TOKIO_WORKER_THREADS: process.env.TOKIO_WORKER_THREADS || "1",

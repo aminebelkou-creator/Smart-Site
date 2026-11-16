@@ -6,6 +6,12 @@ import { NextConfig } from "next"
 
 const NEXT_PUBLIC_URL = process.env.NEXT_PUBLIC_URL || "http://localhost:3000"
 
+// "off" replaces the native sharp module with a stub at build time (and Payload
+// gets no sharp), keeping ~35 MB of libvips out of size-limited serverless
+// functions such as EdgeOne Makers' 128 MiB SSR function.
+const IMAGE_PROCESSING = process.env.SMARTSITE_IMAGE_PROCESSING === "off" ? "off" : "sharp"
+const SHARP_STUB = "./src/payload/sharp-stub.ts"
+
 // The project owns its build graph, including when developed inside a workspace.
 const projectRoot = path.dirname(fileURLToPath(import.meta.url))
 
@@ -73,6 +79,9 @@ const nextConfig = {
         outputFileTracingExcludes: {
           "*": [
             "**/node_modules/typescript/**",
+            ...(IMAGE_PROCESSING === "off"
+              ? ["**/node_modules/sharp/**", "**/node_modules/@img/**"]
+              : []),
             "**/node_modules/@img/sharp-libvips-linuxmusl-*/**",
             "**/node_modules/@img/sharp-linuxmusl-*/**",
             "**/*.map",
@@ -86,6 +95,7 @@ const nextConfig = {
   outputFileTracingRoot: projectRoot,
   turbopack: {
     root: projectRoot,
+    ...(IMAGE_PROCESSING === "off" ? { resolveAlias: { sharp: SHARP_STUB } } : {}),
     resolveExtensions: [".mdx", ".tsx", ".ts", ".jsx", ".js", ".mjs", ".json"],
     rules: {
       "*.svg": {
@@ -102,8 +112,21 @@ const nextConfig = {
     "drizzle-kit",
     "esbuild",
     "jsdom",
-    "sharp",
+    ...(IMAGE_PROCESSING === "off" ? [] : ["sharp"]),
   ],
+  // Inline the build-time choice so the runtime agrees with what was bundled.
+  env: { SMARTSITE_IMAGE_PROCESSING: IMAGE_PROCESSING },
+  ...(IMAGE_PROCESSING === "off"
+    ? {
+        webpack: (config: any) => {
+          config.resolve.alias = {
+            ...config.resolve.alias,
+            sharp$: path.resolve(projectRoot, SHARP_STUB),
+          }
+          return config
+        },
+      }
+    : {}),
 } as NextConfig
 
 export default withPayload(nextConfig, { devBundleServerPackages: false })

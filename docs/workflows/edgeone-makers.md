@@ -24,6 +24,7 @@ The Makers free builder (6 GB container, about 2 GB already used by the repo in 
 - Repository secrets: `EDGEONE_API_TOKEN` (Makers console → API Token) and `DATABASE_URL`.
 - Optional repository variable: `NEXT_PUBLIC_URL`.
 - Runtime variables (`DATABASE_PROVIDER`, `DATABASE_URL`, `PAYLOAD_SECRET`, `PREVIEW_SECRET`, `SMARTSITE_SITE_ID`, `SMARTSITE_ENVIRONMENT`, `S3_*`) are set on the `smartsite` Makers project.
+- EdgeOne builds set `SMARTSITE_IMAGE_PROCESSING=off`: sharp/libvips (~35 MB) is replaced by a stub, Payload stores uploaded originals without generating resized copies, and visitors get resized WebP through Next.js image optimization. MCP uploads validate PNG/JPEG/WebP headers with `src/lib/image-probe.ts`. Self-hosted and local builds keep sharp.
 - `scripts/edgeone-build.mjs` logs memory, the exit signal and the traced server bundle size by package. The SSR Cloud Function must stay under 128 MiB.
 
 ## One-time setup

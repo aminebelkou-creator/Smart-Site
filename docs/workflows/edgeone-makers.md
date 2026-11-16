@@ -25,7 +25,7 @@ The Makers free builder (6 GB container, about 2 GB already used by the repo in 
 - Optional repository variable: `NEXT_PUBLIC_URL`.
 - Runtime variables (`DATABASE_PROVIDER`, `DATABASE_URL`, `PAYLOAD_SECRET`, `PREVIEW_SECRET`, `SMARTSITE_SITE_ID`, `SMARTSITE_ENVIRONMENT`, `S3_*`) are set on the `smartsite` Makers project.
 - EdgeOne builds set `SMARTSITE_IMAGE_PROCESSING=off`: sharp/libvips (~35 MB) is replaced by a stub, Payload stores uploaded originals without generating resized copies, and visitors get resized WebP through Next.js image optimization. MCP uploads validate PNG/JPEG/WebP headers with `src/lib/image-probe.ts`. Self-hosted and local builds keep sharp.
-- Turbopack loads server externals through hashed symlinks in `.next/node_modules` (`typescript-<hash>`, `mongoose-<hash>`…). EdgeOne ships only traced files, so `scripts/edgeone-build.mjs` replaces those symlinks with real runtime-only copies and adds them to the `.nft.json` traces.
+- EdgeOne builds use webpack (`next build --webpack`; set `SMARTSITE_BUNDLER=turbopack` to opt out). Turbopack loads server externals through hashed symlinks in `.next/node_modules` (`typescript-<hash>`, `mongoose-<hash>`…). EdgeOne ships only traced files, so `scripts/edgeone-build.mjs` replaces those symlinks with real runtime-only copies and adds them to the `.nft.json` traces.
 - `scripts/edgeone-build.mjs` logs memory, the exit signal and the traced server bundle size by package. The SSR Cloud Function must stay under 128 MiB.
 
 ## One-time setup

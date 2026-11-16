@@ -11,6 +11,7 @@ const NEXT_PUBLIC_URL = process.env.NEXT_PUBLIC_URL || "http://localhost:3000"
 // functions such as EdgeOne Makers' 128 MiB SSR function.
 const IMAGE_PROCESSING = process.env.SMARTSITE_IMAGE_PROCESSING === "off" ? "off" : "sharp"
 const SHARP_STUB = "./src/payload/sharp-stub.ts"
+const IMAGE_LIBRARY = "@/payload/image-library"
 
 // The project owns its build graph, including when developed inside a workspace.
 const projectRoot = path.dirname(fileURLToPath(import.meta.url))
@@ -78,9 +79,16 @@ const nextConfig = {
         // Files traced into the server bundle that are never used at runtime.
         outputFileTracingExcludes: {
           "*": [
-            // typescript is loaded through a hashed external that
-            // scripts/edgeone-build.mjs materializes (lib/typescript.js only).
-            "**/node_modules/typescript/**",
+            // typescript is loaded at server start by @payloadcms/plugin-mcp:
+            // keep lib/typescript.js, drop the compiler CLI, tsserver and locales.
+            "**/node_modules/typescript/lib/*.d.ts",
+            "**/node_modules/typescript/lib/tsc.js",
+            "**/node_modules/typescript/lib/_tsc.js",
+            "**/node_modules/typescript/lib/tsserver*.js",
+            "**/node_modules/typescript/lib/_tsserver.js",
+            "**/node_modules/typescript/lib/*ypingsInstaller.js",
+            "**/node_modules/typescript/lib/watchGuard.js",
+            "**/node_modules/typescript/lib/*/diagnosticMessages.generated.json",
             ...(IMAGE_PROCESSING === "off"
               ? ["**/node_modules/sharp/**", "**/node_modules/@img/**"]
               : []),
@@ -97,7 +105,9 @@ const nextConfig = {
   outputFileTracingRoot: projectRoot,
   turbopack: {
     root: projectRoot,
-    ...(IMAGE_PROCESSING === "off" ? { resolveAlias: { sharp: SHARP_STUB } } : {}),
+    ...(IMAGE_PROCESSING === "off"
+      ? { resolveAlias: { sharp: SHARP_STUB, [IMAGE_LIBRARY]: SHARP_STUB } }
+      : {}),
     resolveExtensions: [".mdx", ".tsx", ".ts", ".jsx", ".js", ".mjs", ".json"],
     rules: {
       "*.svg": {
@@ -124,6 +134,7 @@ const nextConfig = {
           config.resolve.alias = {
             ...config.resolve.alias,
             sharp$: path.resolve(projectRoot, SHARP_STUB),
+            [`${IMAGE_LIBRARY}$`]: path.resolve(projectRoot, SHARP_STUB),
           }
           return config
         },

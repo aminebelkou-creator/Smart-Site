@@ -19,7 +19,9 @@ import os from "node:os"
 
 const mb = bytes => Math.round(bytes / 2 ** 20)
 const heap = process.env.SMARTSITE_BUILD_HEAP_MB || "2048"
-const bundler = process.env.SMARTSITE_BUNDLER === "webpack" ? ["--webpack"] : []
+// webpack by default: Turbopack references server packages through hashed
+// aliases (.next/node_modules/<pkg>-<hash>) that EdgeOne's runtime cannot load.
+const bundler = (process.env.SMARTSITE_BUNDLER || "webpack") === "webpack" ? ["--webpack"] : []
 
 function cgroupMemory() {
   for (const file of ["/sys/fs/cgroup/memory.max", "/sys/fs/cgroup/memory/memory.limit_in_bytes"]) {

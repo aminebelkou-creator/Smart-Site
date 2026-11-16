@@ -34,7 +34,7 @@ import { getServerSideURL } from "@/lib/get-url"
 import { lexicalEditor } from "@payloadcms/richtext-lexical"
 import path from "path"
 import { buildConfig } from "payload"
-import sharp from "sharp"
+import sharp from "@/payload/image-library"
 import { fileURLToPath } from "url"
 
 const filename = fileURLToPath(import.meta.url)

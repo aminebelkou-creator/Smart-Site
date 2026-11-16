@@ -58,16 +58,6 @@ const nextConfig = {
     quietDeps: true,
     silenceDeprecations: ["import", "global-builtin", "legacy-js-api"],
   },
-  // EdgeOne Makers' free builder caps the build container at 6 GB and keeps the
-  // repo in RAM. Cap Turbopack's native memory there (SMARTSITE_TURBOPACK_MEMORY_MB).
-  ...(process.env.SMARTSITE_DEPLOY_TARGET === "edgeone"
-    ? {
-        experimental: {
-          turbopackMemoryLimit:
-            Number(process.env.SMARTSITE_TURBOPACK_MEMORY_MB || 1536) * 2 ** 20,
-        },
-      }
-    : {}),
   outputFileTracingRoot: projectRoot,
   turbopack: {
     root: projectRoot,

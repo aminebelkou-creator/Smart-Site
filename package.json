@@ -8,7 +8,7 @@
   "scripts": {
     "bootstrap": "node scripts/bootstrap-smartsite.mjs",
     "build": "pnpm run generate:sitemap && cross-env NODE_OPTIONS='--no-deprecation --max-old-space-size=7168' next build",
-    "build:edgeone": "node -e \"const o=require('os');console.log('[smartsite] node',process.version,'mem',Math.round(o.totalmem()/2**20),'MB','free',Math.round(o.freemem()/2**20),'MB','cpus',o.cpus().length)\" && pnpm run generate:sitemap && cross-env SMARTSITE_DEPLOY_TARGET=edgeone NODE_OPTIONS='--no-deprecation --max-old-space-size=3584' next build",
+    "build:edgeone": "pnpm run generate:sitemap && node scripts/edgeone-build.mjs",
     "doctor": "node scripts/doctor-smartsite.mjs",
     "dev": "cross-env NODE_OPTIONS=--no-deprecation next dev",
     "dev:prod": "cross-env NODE_OPTIONS=--no-deprecation rm -rf .next && pnpm build && pnpm start",

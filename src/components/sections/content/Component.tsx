@@ -77,7 +77,7 @@ const contentVariants = tv({
   },
 })
 
-export function ContentComponent(props: ContentBlock) {
+export function ContentComponent(props: ContentBlock & { mapQuery?: string | null }) {
   const {
     content,
     layout,
@@ -88,9 +88,13 @@ export function ContentComponent(props: ContentBlock) {
     showButton,
     button,
     sectionSettings,
+    mapQuery,
   } = props
 
-  const hasMedia = Boolean(showMedia && media)
+  const mapSrc = mapQuery?.trim()
+    ? `https://www.google.com/maps?q=${encodeURIComponent(mapQuery.trim())}&output=embed`
+    : null
+  const hasMedia = Boolean(mapSrc || (showMedia && media))
   const requestedLayout = layout ?? "stacked"
   const effectiveLayout =
     requestedLayout === "split" && !hasMedia ? "stacked" : requestedLayout
@@ -140,7 +144,17 @@ export function ContentComponent(props: ContentBlock) {
           ) : null}
         </div>
 
-        {hasMedia ? (
+        {mapSrc ? (
+          <div className={`${mediaClassName} agi-map`}>
+            <iframe
+              src={mapSrc}
+              title={`Map: ${mapQuery}`}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              allowFullScreen
+            />
+          </div>
+        ) : hasMedia ? (
           <Media
             resource={media}
             className={mediaClassName}

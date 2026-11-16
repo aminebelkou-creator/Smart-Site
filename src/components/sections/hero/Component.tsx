@@ -4,6 +4,7 @@ import { CMSLink } from "@/components/fields/link"
 import { Media } from "@/components/fields/media"
 import { Section } from "@/components/fields/section"
 import { tv } from "tailwind-variants"
+import { StickyCta } from "./sticky-cta"
 
 const heroVariants = tv({
   slots: {
@@ -70,7 +71,7 @@ const heroVariants = tv({
   },
 })
 
-export function HeroComponent(props: HeroBlock & { sideImage?: unknown }) {
+export function HeroComponent(props: HeroBlock & { sideImage?: unknown; stickyCta?: boolean | null }) {
   const {
     preheading,
     heading,
@@ -82,6 +83,7 @@ export function HeroComponent(props: HeroBlock & { sideImage?: unknown }) {
     sideImage,
     visualStyle = "classic",
     sectionSettings,
+    stickyCta,
   } = props
 
   const parsedHeading = parseHeadingGradient(heading) ?? heading
@@ -92,6 +94,16 @@ export function HeroComponent(props: HeroBlock & { sideImage?: unknown }) {
 
   const heroButtons = buttons?.filter(buttonItem => Boolean(buttonItem?.button)) ?? []
   const hasButtons = heroButtons.length > 0
+  const firstButton = heroButtons[0]?.button as
+    | { type?: string | null; url?: string | null; label?: string | null; newTab?: boolean | null; reference?: any }
+    | undefined
+  const referenceDoc = firstButton?.reference?.value
+  const firstHref =
+    firstButton?.type === "reference"
+      ? (referenceDoc && typeof referenceDoc === "object" && typeof referenceDoc.uri === "string" ? (referenceDoc.uri.startsWith("/") ? referenceDoc.uri : `/${referenceDoc.uri}`) : null)
+      : firstButton?.url || null
+  const stickyHref = stickyCta && firstHref ? firstHref : null
+  const stickyLabel = firstButton?.label || "Apply now"
 
   const hasBackground = Boolean(backgroundImage && typeof backgroundImage === "object")
   const styleVariant =
@@ -159,13 +171,9 @@ export function HeroComponent(props: HeroBlock & { sideImage?: unknown }) {
       ) : null}
 
       <div className={sideImage && typeof sideImage === "object" ? `${contentClassName} agi-hero-split` : contentClassName}>
-        <div
-          className={wrapperClassName}
-          data-animate="fade-up"
-          data-animate-distance="24"
-          data-animate-stagger="0.1"
-          data-animate-target="[data-animate-child]"
-        >
+        {/* No scroll-triggered animation here: the hero is the first thing visitors see,
+            so it renders immediately with a short CSS fade (agi.css → .agi-hero-copy). */}
+        <div className={`${wrapperClassName} agi-hero-copy`}>
           <div className={copyClassName}>
             {preheading ? (
               <p className={preheadingClassName} data-animate-child>
@@ -201,11 +209,12 @@ export function HeroComponent(props: HeroBlock & { sideImage?: unknown }) {
           ) : null}
         </div>
         {sideImage && typeof sideImage === "object" ? (
-          <div className="agi-hero-side" data-animate="fade-up">
+          <div className="agi-hero-side agi-hero-copy">
             <Media resource={sideImage} imgClassName="h-auto w-full object-contain" priority />
           </div>
         ) : null}
       </div>
+      {stickyHref ? <StickyCta href={stickyHref} label={stickyLabel} newTab={Boolean(firstButton?.newTab)} /> : null}
     </Section>
   )
 }

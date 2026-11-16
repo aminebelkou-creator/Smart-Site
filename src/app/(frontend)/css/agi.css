@@ -565,3 +565,189 @@ section.text-white .agi-faq__answer p {
     display: block;
   }
 }
+
+/* =====================================================================
+   Visual upgrades (Nov 2026)
+   ===================================================================== */
+
+/* ---------- hero: visible immediately, short CSS fade (no scroll trigger) ---------- */
+@keyframes agi-rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+.agi-hero-copy { animation: agi-rise 0.45s ease-out both; }
+.agi-hero-side.agi-hero-copy { animation-delay: 0.1s; }
+@media (prefers-reduced-motion: reduce) {
+  .agi-hero-copy { animation: none; }
+}
+
+/* ---------- card icons ---------- */
+.agi-card__icon {
+  width: 30px;
+  height: 30px;
+  color: var(--agi-gold);
+  margin-bottom: 4px;
+}
+
+/* ---------- logo strip (cards style "logos") ---------- */
+.agi-cards--logos { align-items: stretch; }
+.agi-logo {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 10px;
+  padding: 18px 12px;
+  border: 1px solid rgb(10 49 97 / 0.1);
+  background: #fff;
+}
+.agi-logo__img {
+  position: relative;
+  height: 64px;
+  width: 100%;
+  max-width: 180px;
+  filter: grayscale(1);
+  opacity: 0.75;
+  transition: filter 0.3s, opacity 0.3s;
+}
+.agi-logo:hover .agi-logo__img { filter: none; opacity: 1; }
+.agi-logo__text {
+  font-family: var(--font-heading);
+  font-size: 22px;
+  line-height: 1.15;
+  color: var(--agi-navy);
+}
+.agi-logo__caption { font-size: 12px; line-height: 1.45; color: var(--agi-grey); }
+section.text-white .agi-logo { background: rgb(255 255 255 / 0.04); border-color: rgb(255 255 255 / 0.15); }
+section.text-white .agi-logo__text { color: #fff; }
+section.text-white .agi-logo__caption { color: rgb(255 255 255 / 0.7); }
+
+/* ---------- embedded map (content block) ---------- */
+.agi-map { aspect-ratio: 4 / 3; min-height: 280px; }
+.agi-map iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+
+/* ---------- testimonial avatar (shown only with agi-fx) ---------- */
+.agi-avatar { display: none; }
+.agi-who { display: flex; flex-direction: column; gap: 2px; }
+
+/* ---------- sticky "Apply" bar on phones (hero option) ---------- */
+.agi-sticky-cta {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: calc(12px + env(safe-area-inset-bottom));
+  z-index: 60;
+  transform: translateY(160%);
+  transition: transform 0.3s ease;
+}
+.agi-sticky-cta.is-visible { transform: none; }
+.agi-sticky-cta a {
+  display: block;
+  text-align: center;
+  background: var(--agi-gold);
+  color: var(--agi-navy-deep);
+  font-weight: 600;
+  font-size: 15px;
+  padding: 14px 18px;
+  box-shadow: 0 10px 28px rgb(6 21 41 / 0.3);
+}
+@media (min-width: 768px) {
+  .agi-sticky-cta { display: none; }
+}
+
+/* =====================================================================
+   agi-fx — opt-in visual layer.
+   Enable per section: Section Settings → Attributes → key "class", value "agi-fx".
+   ===================================================================== */
+
+/* Red · gold · navy ribbon above section titles */
+.agi-fx .agi-kicker::before,
+.agi-fx:not(:has(.agi-head)) :is(h1, h2):first-of-type::before {
+  content: "";
+  display: block;
+  width: 56px;
+  height: 3px;
+  margin-bottom: 16px;
+  background: linear-gradient(
+    90deg,
+    var(--agi-red) 0 33.3%,
+    var(--agi-gold) 33.3% 66.6%,
+    var(--agi-navy) 66.6% 100%
+  );
+}
+section.text-white.agi-fx .agi-kicker::before,
+section.text-white.agi-fx:not(:has(.agi-head)) :is(h1, h2):first-of-type::before {
+  background: linear-gradient(90deg, var(--agi-red) 0 33.3%, var(--agi-gold) 33.3% 66.6%, #fff 66.6% 100%);
+}
+.agi-fx .agi-head--center .agi-kicker::before,
+.agi-fx .text-center :is(h1, h2):first-of-type::before,
+.agi-fx .items-center :is(h1, h2):first-of-type::before { margin-inline: auto; }
+.agi-fx .agi-kicker::before { margin-bottom: 14px; }
+
+/* Cards lift and photos zoom slowly on hover */
+.agi-fx .agi-card { transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.2s; }
+.agi-fx .agi-cards--boxed .agi-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 22px 44px -22px rgb(10 49 97 / 0.4);
+}
+.agi-fx .agi-card__media img { transition: transform 0.9s ease; }
+.agi-fx .agi-card:hover .agi-card__media img { transform: scale(1.06); }
+.agi-fx .agi-card__icon { transition: transform 0.35s ease; }
+.agi-fx .agi-card:hover .agi-card__icon { transform: translateY(-2px) scale(1.08); }
+
+/* Content images zoom gently too */
+.agi-fx .border-dark-border.bg-neutral img { transition: transform 1.2s ease; }
+.agi-fx .border-dark-border.bg-neutral:hover img { transform: scale(1.04); }
+
+/* Testimonials: initials in a gold circle and a large quote mark */
+.agi-fx .agi-testimonial { position: relative; overflow: hidden; }
+.agi-fx .agi-testimonial::before {
+  content: "“";
+  position: absolute;
+  top: -18px;
+  inset-inline-end: 14px;
+  font-family: var(--font-heading);
+  font-size: 140px;
+  line-height: 1;
+  color: var(--agi-gold);
+  opacity: 0.22;
+  pointer-events: none;
+}
+.agi-fx .agi-testimonial figcaption { flex-direction: row; align-items: center; gap: 12px; }
+.agi-fx .agi-avatar {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--agi-gold);
+  color: var(--agi-navy-deep);
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+}
+
+/* Footer gets the ribbon on pages that use agi-fx */
+body:has(.agi-fx) footer { position: relative; border-top-color: transparent; }
+body:has(.agi-fx) footer::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 4px;
+  background: linear-gradient(
+    90deg,
+    var(--agi-red) 0 33.3%,
+    var(--agi-gold) 33.3% 66.6%,
+    var(--agi-navy) 66.6% 100%
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .agi-fx .agi-card,
+  .agi-fx .agi-card__media img,
+  .agi-fx .border-dark-border.bg-neutral img { transition: none; }
+  .agi-fx .agi-cards--boxed .agi-card:hover,
+  .agi-fx .agi-card:hover .agi-card__media img,
+  .agi-fx .border-dark-border.bg-neutral:hover img { transform: none; }
+}

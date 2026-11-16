@@ -1,5 +1,6 @@
 import { Section, type SectionSettings } from "@/components/fields/section"
 import { SectionIntro } from "@/components/sections/agi/intro"
+import { CountUp } from "@/components/sections/agi/count-up"
 
 export type FactsBlockProps = {
   kicker?: string | null
@@ -19,7 +20,7 @@ export function FactsComponent({ kicker, heading, intro, note, items, sectionSet
         <dl className="agi-facts grid grid-cols-2 lg:grid-cols-4">
           {items.map((item, index) => (
             <div key={item.id ?? index} className="agi-fact">
-              <dt className="agi-fact__value">{item.value}</dt>
+              <dt className="agi-fact__value"><CountUp value={item.value} /></dt>
               <dd className="agi-fact__label">{item.label}</dd>
             </div>
           ))}

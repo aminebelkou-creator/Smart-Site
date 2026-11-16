@@ -161,6 +161,15 @@ export const Hero: Block = {
         },
       ],
     },
+    {
+      name: "stickyCta",
+      type: "checkbox",
+      defaultValue: false,
+      label: "Repeat the first button as a sticky bar on phones",
+      admin: {
+        description: "After visitors scroll past the hero, the first button stays at the bottom of the screen on mobile.",
+      },
+    },
     sectionSettings(),
   ],
 }

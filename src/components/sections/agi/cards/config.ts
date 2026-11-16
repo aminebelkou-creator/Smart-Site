@@ -4,6 +4,26 @@ import { sectionSettings } from "@/components/fields/section"
 import { link } from "@/components/fields/link/link"
 import { introFields } from "@/components/sections/agi/fields"
 
+/* Kept in sync with AGI_ICONS in ../icons.tsx (config must stay free of React imports). */
+const ICON_OPTIONS = [
+  { label: "Graduation cap", value: "graduation-cap" },
+  { label: "Book", value: "book-open" },
+  { label: "Globe", value: "globe" },
+  { label: "Languages", value: "languages" },
+  { label: "School", value: "school" },
+  { label: "People", value: "users" },
+  { label: "Care / support", value: "heart-handshake" },
+  { label: "Award", value: "award" },
+  { label: "Accredited / safe", value: "shield-check" },
+  { label: "Creative", value: "sparkles" },
+  { label: "Star", value: "star" },
+  { label: "Online / laptop", value: "laptop" },
+  { label: "Writing / exams", value: "pen-line" },
+  { label: "Young children", value: "baby" },
+  { label: "Calendar", value: "calendar-days" },
+  { label: "Location", value: "map-pin" },
+]
+
 export const Cards: Block = {
   slug: "cards",
   interfaceName: "CardsBlock",
@@ -34,6 +54,7 @@ export const Cards: Block = {
             { label: "Boxed cards", value: "boxed" },
             { label: "Plain (no box)", value: "plain" },
             { label: "Numbered steps", value: "numbered" },
+            { label: "Logo strip (images only)", value: "logos" },
           ],
           admin: { width: "50%" },
         },
@@ -54,6 +75,13 @@ export const Cards: Block = {
           ],
         },
         { name: "text", type: "textarea", label: "Text" },
+        {
+          name: "icon",
+          type: "select",
+          label: "Icon (optional)",
+          options: ICON_OPTIONS,
+          admin: { description: "A small gold icon above the title." },
+        },
         { name: "image", type: "upload", relationTo: "media", label: "Image (optional)" },
         link({ optional: true, overrides: { label: "Link (optional)" } }),
       ],

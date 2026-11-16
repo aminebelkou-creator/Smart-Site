@@ -86,6 +86,22 @@ export const Content: Block = {
     },
     {
       type: "collapsible",
+      label: "Map (optional)",
+      admin: { initCollapsed: true },
+      fields: [
+        {
+          name: "mapQuery",
+          type: "text",
+          label: "Google Maps address or place",
+          admin: {
+            description:
+              "e.g. “American Group International, Agadir”. Shows an embedded map in place of the image (uses the media position).",
+          },
+        },
+      ],
+    },
+    {
+      type: "collapsible",
       label: "Call to action",
       fields: [
         {

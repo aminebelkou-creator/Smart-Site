@@ -9,6 +9,18 @@ export type TestimonialsListBlockProps = {
   sectionSettings?: SectionSettings | null
 }
 
+function initials(name?: string | null) {
+  if (!name) return ""
+  const words = name
+    .replace(/[^\p{L}\s'-]/gu, " ")
+    .split(/\s+/)
+    .filter(w => w && !/^(of|the|a|an|de|du|la|le|des|et|and)$/i.test(w))
+  return words
+    .slice(0, 2)
+    .map(w => w[0]!.toUpperCase())
+    .join("")
+}
+
 export function TestimonialsListComponent({
   kicker,
   heading,
@@ -26,8 +38,15 @@ export function TestimonialsListComponent({
               <blockquote>{item.quote}</blockquote>
               {item.name || item.note ? (
                 <figcaption>
-                  {item.name ? <b>{item.name}</b> : null}
-                  {item.note ? <span>{item.note}</span> : null}
+                  {item.name ? (
+                    <i className="agi-avatar" aria-hidden>
+                      {initials(item.name)}
+                    </i>
+                  ) : null}
+                  <span className="agi-who">
+                    {item.name ? <b>{item.name}</b> : null}
+                    {item.note ? <span>{item.note}</span> : null}
+                  </span>
                 </figcaption>
               ) : null}
             </figure>

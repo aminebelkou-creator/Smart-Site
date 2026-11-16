@@ -11,6 +11,8 @@ const NEXT_PUBLIC_URL = process.env.NEXT_PUBLIC_URL || "http://localhost:3000"
 // functions such as EdgeOne Makers' 128 MiB SSR function.
 const IMAGE_PROCESSING = process.env.SMARTSITE_IMAGE_PROCESSING === "off" ? "off" : "sharp"
 const SHARP_STUB = "./src/payload/sharp-stub.ts"
+const EDGEONE = process.env.SMARTSITE_DEPLOY_TARGET === "edgeone"
+const TYPESCRIPT_STUB = "./src/payload/typescript-stub.ts"
 
 // The project owns its build graph, including when developed inside a workspace.
 const projectRoot = path.dirname(fileURLToPath(import.meta.url))
@@ -78,8 +80,8 @@ const nextConfig = {
         // Files traced into the server bundle that are never used at runtime.
         outputFileTracingExcludes: {
           "*": [
-            // typescript stays: a dependency loads it at server start (deploy showed
-            // "Cannot find module typescript" on every request when excluded).
+            // typescript is aliased to a stub on EdgeOne (see TYPESCRIPT_STUB).
+            "**/node_modules/typescript/**",
             ...(IMAGE_PROCESSING === "off"
               ? ["**/node_modules/sharp/**", "**/node_modules/@img/**"]
               : []),
@@ -96,7 +98,12 @@ const nextConfig = {
   outputFileTracingRoot: projectRoot,
   turbopack: {
     root: projectRoot,
-    ...(IMAGE_PROCESSING === "off" ? { resolveAlias: { sharp: SHARP_STUB } } : {}),
+    resolveAlias: {
+      ...(IMAGE_PROCESSING === "off" ? { sharp: SHARP_STUB } : {}),
+      // A dependency imports typescript at server start; on EdgeOne the hashed
+      // Turbopack external for it is not packaged, so bundle a stub instead.
+      ...(EDGEONE ? { typescript: TYPESCRIPT_STUB } : {}),
+    },
     resolveExtensions: [".mdx", ".tsx", ".ts", ".jsx", ".js", ".mjs", ".json"],
     rules: {
       "*.svg": {
@@ -117,12 +124,15 @@ const nextConfig = {
   ],
   // Inline the build-time choice so the runtime agrees with what was bundled.
   env: { SMARTSITE_IMAGE_PROCESSING: IMAGE_PROCESSING },
-  ...(IMAGE_PROCESSING === "off"
+  ...(IMAGE_PROCESSING === "off" || EDGEONE
     ? {
         webpack: (config: any) => {
           config.resolve.alias = {
             ...config.resolve.alias,
-            sharp$: path.resolve(projectRoot, SHARP_STUB),
+            ...(IMAGE_PROCESSING === "off"
+              ? { sharp$: path.resolve(projectRoot, SHARP_STUB) }
+              : {}),
+            ...(EDGEONE ? { typescript$: path.resolve(projectRoot, TYPESCRIPT_STUB) } : {}),
           }
           return config
         },

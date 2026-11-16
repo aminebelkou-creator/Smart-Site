@@ -11,12 +11,6 @@ const NEXT_PUBLIC_URL = process.env.NEXT_PUBLIC_URL || "http://localhost:3000"
 // functions such as EdgeOne Makers' 128 MiB SSR function.
 const IMAGE_PROCESSING = process.env.SMARTSITE_IMAGE_PROCESSING === "off" ? "off" : "sharp"
 const SHARP_STUB = "./src/payload/sharp-stub.ts"
-const EDGEONE = process.env.SMARTSITE_DEPLOY_TARGET === "edgeone"
-// @payloadcms/plugin-mcp imports typescript (ts.transpileModule) at server start.
-// Turbopack externalizes it under a hashed alias that EdgeOne's packaging drops, so
-// on EdgeOne point it at the compiler file itself: one ~9 MB bundled file instead of
-// a missing external (and the 19 MB package folder stays out of the trace).
-const TYPESCRIPT_FILE = "./node_modules/typescript/lib/typescript.js"
 
 // The project owns its build graph, including when developed inside a workspace.
 const projectRoot = path.dirname(fileURLToPath(import.meta.url))
@@ -84,7 +78,8 @@ const nextConfig = {
         // Files traced into the server bundle that are never used at runtime.
         outputFileTracingExcludes: {
           "*": [
-            // typescript is bundled from TYPESCRIPT_FILE on EdgeOne.
+            // typescript is materialized into .next/node_modules by
+            // scripts/edgeone-build.mjs (runtime files only), not traced here.
             "**/node_modules/typescript/**",
             ...(IMAGE_PROCESSING === "off"
               ? ["**/node_modules/sharp/**", "**/node_modules/@img/**"]
@@ -102,10 +97,7 @@ const nextConfig = {
   outputFileTracingRoot: projectRoot,
   turbopack: {
     root: projectRoot,
-    resolveAlias: {
-      ...(IMAGE_PROCESSING === "off" ? { sharp: SHARP_STUB } : {}),
-      ...(EDGEONE ? { typescript: TYPESCRIPT_FILE } : {}),
-    },
+    ...(IMAGE_PROCESSING === "off" ? { resolveAlias: { sharp: SHARP_STUB } } : {}),
     resolveExtensions: [".mdx", ".tsx", ".ts", ".jsx", ".js", ".mjs", ".json"],
     rules: {
       "*.svg": {
@@ -126,15 +118,12 @@ const nextConfig = {
   ],
   // Inline the build-time choice so the runtime agrees with what was bundled.
   env: { SMARTSITE_IMAGE_PROCESSING: IMAGE_PROCESSING },
-  ...(IMAGE_PROCESSING === "off" || EDGEONE
+  ...(IMAGE_PROCESSING === "off"
     ? {
         webpack: (config: any) => {
           config.resolve.alias = {
             ...config.resolve.alias,
-            ...(IMAGE_PROCESSING === "off"
-              ? { sharp$: path.resolve(projectRoot, SHARP_STUB) }
-              : {}),
-            ...(EDGEONE ? { typescript$: path.resolve(projectRoot, TYPESCRIPT_FILE) } : {}),
+            sharp$: path.resolve(projectRoot, SHARP_STUB),
           }
           return config
         },

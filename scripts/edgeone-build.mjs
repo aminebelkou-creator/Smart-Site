@@ -3,7 +3,16 @@
 // periodic memory samples and the exact exit code/signal. The Makers log does
 // not show why a process died, so this makes out-of-memory kills visible.
 import { spawn } from "node:child_process"
-import { existsSync, readFileSync, readdirSync, realpathSync, statSync } from "node:fs"
+import {
+  cpSync,
+  existsSync,
+  lstatSync,
+  readFileSync,
+  readdirSync,
+  realpathSync,
+  rmSync,
+  statSync,
+} from "node:fs"
 import path from "node:path"
 import os from "node:os"
 
@@ -65,7 +74,10 @@ child.on("exit", (code, signal) => {
     `[smartsite] next build exited: code ${code}, signal ${signal ?? "none"}, ` +
       `after ${Math.round((Date.now() - started) / 1000)}s, lowest free memory ${mb(lowest)} MB`
   )
-  if (code === 0) reportServerTrace()
+  if (code === 0) {
+    materializeExternals()
+    reportServerTrace()
+  }
   process.exit(code ?? 1)
 })
 
@@ -107,4 +119,42 @@ function reportServerTrace() {
   } catch (error) {
     console.log(`[smartsite] trace report failed: ${error.message}`)
   }
+}
+
+// Turbopack references some server externals through hashed aliases that are
+// symlinks in .next/node_modules (e.g. typescript-<hash>, imported by
+// @payloadcms/plugin-mcp). EdgeOne's packaging does not keep these symlinks, so
+// every request failed with "Cannot find module typescript-<hash>". Replace each
+// symlink with a real copy of the package's runtime files.
+function materializeExternals() {
+  const dir = path.join(process.cwd(), ".next", "node_modules")
+  if (!existsSync(dir)) return console.log("[smartsite] no .next/node_modules externals")
+  const runtimeOnly = source =>
+    !/\.(d\.ts|d\.mts|d\.cts|map|md|markdown|txt)$/i.test(source) &&
+    !/[\\/](docs?|test|tests|__tests__|examples?)[\\/]/.test(source)
+  const visit = (folder, depth) => {
+    for (const entry of readdirSync(folder, { withFileTypes: true })) {
+      const full = path.join(folder, entry.name)
+      if (entry.name.startsWith("@") && entry.isDirectory() && depth === 0) {
+        visit(full, 1)
+        continue
+      }
+      if (!lstatSync(full).isSymbolicLink()) continue
+      const target = realpathSync(full)
+      rmSync(full, { recursive: true, force: true })
+      cpSync(target, full, { recursive: true, dereference: true, filter: runtimeOnly })
+      const size = mb(folderSize(full))
+      console.log(`[smartsite] materialized external ${path.relative(dir, full)} (${size} MB)`)
+    }
+  }
+  visit(dir, 0)
+}
+
+function folderSize(folder) {
+  let total = 0
+  for (const entry of readdirSync(folder, { withFileTypes: true })) {
+    const full = path.join(folder, entry.name)
+    total += entry.isDirectory() ? folderSize(full) : statSync(full).size
+  }
+  return total
 }

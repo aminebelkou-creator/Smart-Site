@@ -1,7 +1,7 @@
 import { HeaderNavigation } from "@/components/header/nav"
 import { getGlobal, getSettings } from "@/lib/data/globals"
 import type { Header, Setting } from "@/payload-types"
-import Link from "next/link"
+import { HomeLink } from "@/components/locale/home-link"
 
 import type { Config } from "payload"
 import LogoPrimary from "@/components/logos/logo"
@@ -27,13 +27,9 @@ export async function Header() {
       )}
     >
       <div className="max-w-container gap-content mx-auto flex h-full w-full items-center justify-between">
-        <Link
-          href="/"
-          className="gap-content-sm flex items-center"
-          aria-label="Return to homepage"
-        >
+        <HomeLink className="gap-content-sm flex items-center">
           <LogoPrimary className="h-logo w-auto" />
-        </Link>
+        </HomeLink>
         <HeaderNavigation data={headerData} search={searchConfig} uris={uris} />
         <MobileNavUpdated
           data={headerData}

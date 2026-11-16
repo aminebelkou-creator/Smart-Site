@@ -10,7 +10,7 @@ Stack: EdgeOne Makers (Next.js app, CDN) + MongoDB Atlas (free M0 is enough for 
 |---|---|---|
 | Cloud Functions runtime | Node 20.19.3 (measured) | `engines` relaxed to `>=20.9.0`; build on Node 20 so incompatible packages fail at build time, not in production. `src/` uses no Node 21+ APIs. |
 | Builder | 4 cores / 6 GB, 20 min; Next.js is adapted with `@edgeone/opennextjs-pages` (OpenNext) | `build:edgeone` uses a 3.5 GB V8 heap (Turbopack native memory needs the rest of the 6 GB). |
-| Package manager | docs list pnpm ≤ 9 | `edgeone.json` runs pnpm 10.34.8 through `npx`, with `node-linker=hoisted`: pnpm's symlinked layout makes Turbopack emit hashed externals (`.next/node_modules/<pkg>-<hash>`) that EdgeOne does not package. |
+| Package manager | docs list pnpm ≤ 9 | `edgeone.json` runs pnpm 10.34.8 through `npx`. |
 | Function bundle | 128 MiB incl. dependencies | Postgres adapter removed; sharp off on EdgeOne; source maps and `.d.ts` excluded. `typescript` must stay (loaded at server start). |
 | Request body | 6 MB (Cloud Functions) | Media uploads go browser → bucket (`clientUploads`). |
 | Persistent disk | none | `SMARTSITE_MEDIA_STORAGE=s3` is mandatory on Makers. |
@@ -25,6 +25,7 @@ The Makers free builder (6 GB container, about 2 GB already used by the repo in 
 - Optional repository variable: `NEXT_PUBLIC_URL`.
 - Runtime variables (`DATABASE_PROVIDER`, `DATABASE_URL`, `PAYLOAD_SECRET`, `PREVIEW_SECRET`, `SMARTSITE_SITE_ID`, `SMARTSITE_ENVIRONMENT`, `S3_*`) are set on the `smartsite` Makers project.
 - EdgeOne builds set `SMARTSITE_IMAGE_PROCESSING=off`: sharp/libvips (~35 MB) is replaced by a stub, Payload stores uploaded originals without generating resized copies, and visitors get resized WebP through Next.js image optimization. MCP uploads validate PNG/JPEG/WebP headers with `src/lib/image-probe.ts`. Self-hosted and local builds keep sharp.
+- Turbopack loads server externals through hashed symlinks in `.next/node_modules` (`typescript-<hash>`, `mongoose-<hash>`…). EdgeOne ships only traced files, so `scripts/edgeone-build.mjs` replaces those symlinks with real runtime-only copies and adds them to the `.nft.json` traces.
 - `scripts/edgeone-build.mjs` logs memory, the exit signal and the traced server bundle size by package. The SSR Cloud Function must stay under 128 MiB.
 
 ## One-time setup

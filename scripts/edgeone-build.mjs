@@ -5,6 +5,7 @@
 import { spawn } from "node:child_process"
 import {
   cpSync,
+  writeFileSync,
   existsSync,
   lstatSync,
   readFileSync,
@@ -131,7 +132,11 @@ function materializeExternals() {
   if (!existsSync(dir)) return console.log("[smartsite] no .next/node_modules externals")
   const runtimeOnly = source =>
     !/\.(d\.ts|d\.mts|d\.cts|map|md|markdown|txt)$/i.test(source) &&
-    !/[\\/](docs?|test|tests|__tests__|examples?)[\\/]/.test(source)
+    !/[\\/](docs?|test|tests|__tests__|examples?)[\\/]/.test(source) &&
+    // typescript: keep only lib/typescript.js (what require("typescript") loads);
+    // drop tsc, tsserver, typings installer and localized diagnostics (~10 MB).
+    !/typescript[^\\/]*[\\/]lib[\\/]([a-z]{2}(-[a-z]+)?[\\/]|_?tsc|_?tsserver|_?typingsInstaller|watchGuard|lib\.)/i.test(source)
+  const materialized = []
   const visit = (folder, depth) => {
     for (const entry of readdirSync(folder, { withFileTypes: true })) {
       const full = path.join(folder, entry.name)
@@ -143,11 +148,45 @@ function materializeExternals() {
       const target = realpathSync(full)
       rmSync(full, { recursive: true, force: true })
       cpSync(target, full, { recursive: true, dereference: true, filter: runtimeOnly })
+      materialized.push(full)
       const size = mb(folderSize(full))
       console.log(`[smartsite] materialized external ${path.relative(dir, full)} (${size} MB)`)
     }
   }
   visit(dir, 0)
+  if (materialized.length) addToTraces(materialized)
+}
+
+// EdgeOne packages only files listed in Next's .nft.json traces, so list the
+// materialized externals in every server trace.
+function addToTraces(folders) {
+  const files = []
+  const collect = folder => {
+    for (const entry of readdirSync(folder, { withFileTypes: true })) {
+      const full = path.join(folder, entry.name)
+      if (entry.isDirectory()) collect(full)
+      else files.push(full)
+    }
+  }
+  folders.forEach(collect)
+  const root = path.join(process.cwd(), ".next")
+  const traces = []
+  const findTraces = folder => {
+    for (const entry of readdirSync(folder, { withFileTypes: true })) {
+      const full = path.join(folder, entry.name)
+      if (entry.isDirectory() && entry.name !== "node_modules" && entry.name !== "cache") findTraces(full)
+      else if (entry.name.endsWith(".nft.json")) traces.push(full)
+    }
+  }
+  findTraces(root)
+  for (const trace of traces) {
+    const data = JSON.parse(readFileSync(trace, "utf8"))
+    const listed = new Set(data.files || [])
+    for (const file of files) listed.add(path.relative(path.dirname(trace), file))
+    data.files = [...listed]
+    writeFileSync(trace, JSON.stringify(data))
+  }
+  console.log(`[smartsite] added ${files.length} external files to ${traces.length} traces`)
 }
 
 function folderSize(folder) {

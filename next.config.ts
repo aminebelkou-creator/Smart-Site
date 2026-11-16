@@ -78,7 +78,8 @@ const nextConfig = {
         // Files traced into the server bundle that are never used at runtime.
         outputFileTracingExcludes: {
           "*": [
-            "**/node_modules/typescript/**",
+            // typescript stays: a dependency loads it at server start (deploy showed
+            // "Cannot find module typescript" on every request when excluded).
             ...(IMAGE_PROCESSING === "off"
               ? ["**/node_modules/sharp/**", "**/node_modules/@img/**"]
               : []),

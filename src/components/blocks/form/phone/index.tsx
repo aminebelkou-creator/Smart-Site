@@ -50,7 +50,7 @@ export const Phone: React.FC<
             placeholder="Enter phone number"
             value={field.value}
             onChange={field.onChange}
-            defaultCountry="AE"
+            defaultCountry="MA"
             className="rounded-e-none"
           />
         )}

@@ -8,6 +8,7 @@
   "scripts": {
     "bootstrap": "node scripts/bootstrap-smartsite.mjs",
     "build": "pnpm run generate:sitemap && cross-env NODE_OPTIONS='--no-deprecation --max-old-space-size=7168' next build",
+    "build:edgeone": "pnpm run generate:sitemap && cross-env SMARTSITE_DEPLOY_TARGET=edgeone NODE_OPTIONS='--no-deprecation --max-old-space-size=5120' next build",
     "doctor": "node scripts/doctor-smartsite.mjs",
     "dev": "cross-env NODE_OPTIONS=--no-deprecation next dev",
     "dev:prod": "cross-env NODE_OPTIONS=--no-deprecation rm -rf .next && pnpm build && pnpm start",
@@ -191,7 +192,7 @@
     ]
   },
   "engines": {
-    "node": ">=24.22.1 <25"
+    "node": ">=20.9.0 <25"
   },
   "packageManager": "pnpm@10.34.8"
 }

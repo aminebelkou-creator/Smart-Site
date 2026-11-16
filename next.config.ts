@@ -10,9 +10,13 @@ const NEXT_PUBLIC_URL = process.env.NEXT_PUBLIC_URL || "http://localhost:3000"
 const projectRoot = path.dirname(fileURLToPath(import.meta.url))
 
 const nextConfig = {
-  // Vercel owns its deployment output; standalone is for self-hosted builds.
-  // Next 16.3 cannot combine its standalone finalizer with the Vercel adapter.
-  output: process.env.VERCEL ? undefined : "standalone",
+  // Vercel and EdgeOne Makers own their deployment output; standalone is for
+  // self-hosted builds. Next 16.3 cannot combine its standalone finalizer with
+  // the Vercel adapter, and Makers' builder expects a regular .next output.
+  output:
+    process.env.VERCEL || process.env.SMARTSITE_DEPLOY_TARGET === "edgeone"
+      ? undefined
+      : "standalone",
   poweredByHeader: false,
   deploymentId: process.env.NEXT_DEPLOYMENT_ID,
   images: {
@@ -24,8 +28,8 @@ const nextConfig = {
       { pathname: "/**", search: "" },
     ],
     remotePatterns: [
-      ...[NEXT_PUBLIC_URL].map(item => {
-        const url = new URL(item)
+      ...[NEXT_PUBLIC_URL, process.env.S3_PUBLIC_URL].filter(Boolean).map(item => {
+        const url = new URL(item as string)
 
         return {
           hostname: url.hostname,

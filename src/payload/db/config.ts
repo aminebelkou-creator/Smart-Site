@@ -1,10 +1,12 @@
 import { mongooseAdapter } from "@payloadcms/db-mongodb"
-import { postgresAdapter } from "@payloadcms/db-postgres"
 
+// MongoDB only. The Postgres adapter was imported here statically, which pulled
+// pg/drizzle into every server bundle (a 128 MB function limit on EdgeOne Makers).
+// SmartSite's canonical runtime is MongoDB in every environment (hosting-modes.md).
 const provider = process.env.DATABASE_PROVIDER
-if (provider !== "mongoose" && provider !== "postgres")
+if (provider !== "mongoose")
   throw new Error(
-    "Set DATABASE_PROVIDER explicitly to mongoose or postgres. See getting-started.md."
+    "Set DATABASE_PROVIDER=mongoose. This build supports MongoDB only. See getting-started.md."
   )
 const target = process.env.SMARTSITE_DATABASE_TARGET || "default"
 if (!["default", "prod", "staging"].includes(target))
@@ -16,11 +18,4 @@ if (!connectionUrl)
     "The explicitly selected database URL is missing; no fallback is permitted"
   )
 export const databaseInfo = { target, provider, url: connectionUrl }
-export default provider === "mongoose"
-  ? mongooseAdapter({ url: connectionUrl })
-  : postgresAdapter({
-      pool: { connectionString: connectionUrl },
-      schemaName: "smart-site",
-      idType: "uuid",
-      push: process.env.SMARTSITE_ENVIRONMENT === "local",
-    })
+export default mongooseAdapter({ url: connectionUrl })

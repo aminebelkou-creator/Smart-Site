@@ -24,6 +24,7 @@ import {
   websiteNestedDocs,
 } from "@/payload/plugins"
 import { smartsiteMcp } from "@/payload/mcp/plugin"
+import { mediaStoragePlugins } from "@/payload/storage/s3"
 import site from "@/site.config"
 import { createAdmin } from "@/payload/admin"
 import db, { databaseInfo } from "@/payload/db/config"
@@ -91,6 +92,7 @@ const config = buildConfig({
     websiteNestedDocs,
     smartsiteMcp({ enabled: true }),
     websiteLinksPlugin,
+    ...mediaStoragePlugins(),
     assertWebsiteInventory(inventory),
   ],
   jobs,

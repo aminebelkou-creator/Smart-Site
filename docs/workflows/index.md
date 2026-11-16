@@ -11,3 +11,4 @@ Start locally without choosing hosting. Select hosted/self-hosted only when prep
 - [Deployment](deployment.md)
 - [Upgrading](upgrading.md)
 - [Preview environments](preview-environments.md)
+- [EdgeOne Makers hosting](edgeone-makers.md)

@@ -16,6 +16,16 @@ export async function GET() {
       environment: identity?.environment,
       database: Boolean(identity),
       mcpEnabled: payload.config.custom?.smartsiteMcpEnabled === true,
+      // Opt-in runtime report for host verification (e.g. EdgeOne Makers runs Node 20).
+      ...(process.env.SMARTSITE_RUNTIME_PROBE === "true"
+        ? {
+            runtime: {
+              node: process.version,
+              openssl: process.versions.openssl,
+              platform: `${process.platform}-${process.arch}`,
+            },
+          }
+        : {}),
     },
     { status: identity ? 200 : 503 }
   )

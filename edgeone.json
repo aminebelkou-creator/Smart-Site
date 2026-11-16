@@ -1,0 +1,11 @@
+{
+  "nodeVersion": "20.18.0",
+  "installCommand": "npx --yes pnpm@10.34.8 install --frozen-lockfile",
+  "buildCommand": "npx --yes pnpm@10.34.8 run build:edgeone",
+  "outputDirectory": ".next",
+  "cloudFunctions": {
+    "nodejs": {
+      "externalNodeModules": ["sharp"]
+    }
+  }
+}

@@ -17,8 +17,8 @@ const buttonVariants = tv({
   variants: {
     variant: {
       default: [
-        "from-secondary-700 to-primary bg-gradient-to-r",
-        "text-white shadow-xs hover:opacity-90",
+        "bg-secondary text-primary-900 shadow-xs",
+        "hover:bg-secondary-400",
       ],
       outline: [
         "border-dark-border text-dark bg-transparent",

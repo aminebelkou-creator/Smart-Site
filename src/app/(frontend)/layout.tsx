@@ -12,7 +12,18 @@ import site from "@/site.config"
 import { getI18nConfig } from "@/lib/features"
 import { generateRootLayoutMetadata } from "@/app/(frontend)/layout-metadata"
 
+import { Inter, Newsreader } from "next/font/google"
+
 import "@/app/(frontend)/css/globals.css"
+
+const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "600"], variable: "--font-inter", display: "swap" })
+const newsreader = Newsreader({
+  subsets: ["latin"],
+  weight: ["300", "400", "500"],
+  style: ["normal", "italic"],
+  variable: "--font-newsreader",
+  display: "swap",
+})
 
 /*************************************************************************/
 /*  ROOT LAYOUT
@@ -42,10 +53,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const bodyEnd = integrations?.bodyEnd
 
   return (
-    <html lang={i18n.defaultLocale} suppressHydrationWarning>
+    <html lang={i18n.defaultLocale} className={`${inter.variable} ${newsreader.variable}`} suppressHydrationWarning>
       <head>
-        <link href="/favicon.ico" rel="icon" sizes="32x32" />
-        <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
+        <link href="/favicon.png" rel="icon" type="image/png" />
         {gtmId && <link href="https://www.googletagmanager.com" rel="preconnect" />}
         {gaId && <link href="https://www.google-analytics.com" rel="preconnect" />}
         {head && parse(head)}

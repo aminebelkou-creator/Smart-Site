@@ -1,4 +1,5 @@
 name: Build and Deploy Self-Hosted Release
+# Registered on this fork for the Tencent Lighthouse deployment (43.157.108.87).
 
 on:
   workflow_dispatch:

@@ -17,6 +17,15 @@ Stack: EdgeOne Makers (Next.js app, CDN) + MongoDB Atlas (free M0 is enough for 
 | `next.config` redirects | not executed | Only the IE notice lives there; real redirects are in MongoDB and still work. |
 | Tag revalidation | works, ~8–10 s delay, no stale flip-back (tested on Tencent's ISR demo, Next 15) | Content edits appear after ~10 s. |
 
+## How it is built and deployed
+
+The Makers free builder (6 GB container, about 2 GB already used by the repo in `/dev/shm`) cannot build Next.js + Payload: both Turbopack and webpack were SIGKILLed during compilation. `.github/workflows/edgeone-makers.yml` builds on a GitHub-hosted runner instead and deploys with `edgeone makers deploy` to the direct-upload project `smartsite`.
+
+- Repository secrets: `EDGEONE_API_TOKEN` (Makers console → API Token) and `DATABASE_URL`.
+- Optional repository variable: `NEXT_PUBLIC_URL`.
+- Runtime variables (`DATABASE_PROVIDER`, `DATABASE_URL`, `PAYLOAD_SECRET`, `PREVIEW_SECRET`, `SMARTSITE_SITE_ID`, `SMARTSITE_ENVIRONMENT`, `S3_*`) are set on the `smartsite` Makers project.
+- `scripts/edgeone-build.mjs` logs memory, the exit signal and the traced server bundle size by package. The SSR Cloud Function must stay under 128 MiB.
+
 ## One-time setup
 
 1. **MongoDB Atlas**: create an M0 cluster near your users, a database user with access to this database only, and a strong password. Makers has no fixed egress IPs, so Network Access needs `0.0.0.0/0`.

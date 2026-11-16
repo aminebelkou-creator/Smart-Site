@@ -1,0 +1,69 @@
+name: Deploy to EdgeOne Makers
+
+# Builds SmartSite on a GitHub-hosted runner (the Makers free builder has a 6 GB
+# container that Next.js + Payload exceed) and deploys the result with the
+# EdgeOne CLI to a direct-upload Makers project.
+#
+# Repository secrets:  EDGEONE_API_TOKEN, DATABASE_URL
+# Repository variable: NEXT_PUBLIC_URL (optional until the domain is known)
+# Runtime secrets (PAYLOAD_SECRET, PREVIEW_SECRET, SMARTSITE_SITE_ID, S3_*) live
+# in the Makers project's environment variables, not here.
+
+on:
+  push:
+    branches: [edgeone-makers]
+  workflow_dispatch:
+
+concurrency:
+  group: edgeone-makers
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      DATABASE_PROVIDER: mongoose
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      SMARTSITE_ENVIRONMENT: production
+      # Build-time placeholders: the build signs nothing. Real values are
+      # read at runtime from the Makers project's environment variables.
+      PAYLOAD_SECRET: build-time-placeholder-not-used-at-runtime
+      PREVIEW_SECRET: build-time-placeholder-not-used-at-runtime
+      SMARTSITE_SITE_ID: 00000000-0000-0000-0000-000000000000
+      NEXT_PUBLIC_URL: ${{ vars.NEXT_PUBLIC_URL || 'http://localhost:3000' }}
+      # The runner has 16 GB: use full parallelism.
+      SMARTSITE_BUILD_HEAP_MB: "6144"
+      SMARTSITE_LOW_MEMORY_BUILD: "false"
+      TOKIO_WORKER_THREADS: "4"
+      RAYON_NUM_THREADS: "4"
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - name: Check required secrets
+        env:
+          EDGEONE_API_TOKEN: ${{ secrets.EDGEONE_API_TOKEN }}
+        run: |
+          missing=""
+          [ -n "$EDGEONE_API_TOKEN" ] || missing="$missing EDGEONE_API_TOKEN"
+          [ -n "$DATABASE_URL" ] || missing="$missing DATABASE_URL"
+          if [ -n "$missing" ]; then echo "::error::Missing repository secrets:$missing"; exit 1; fi
+
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.34.8
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.18.0
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Build and deploy
+        env:
+          EDGEONE_API_TOKEN: ${{ secrets.EDGEONE_API_TOKEN }}
+          PAGES_SOURCE: skills
+        run: npx --yes edgeone@1.7.2 makers deploy -n smartsite -t "$EDGEONE_API_TOKEN" --json

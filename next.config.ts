@@ -60,7 +60,8 @@ const nextConfig = {
   },
   // EdgeOne Makers' free builder has a 6 GB container limit with ~2 GB already
   // used by the repo in /dev/shm: keep build parallelism low there.
-  ...(process.env.SMARTSITE_DEPLOY_TARGET === "edgeone"
+  ...(process.env.SMARTSITE_DEPLOY_TARGET === "edgeone" &&
+  process.env.SMARTSITE_LOW_MEMORY_BUILD !== "false"
     ? { experimental: { cpus: 1, workerThreads: false } }
     : {}),
   outputFileTracingRoot: projectRoot,

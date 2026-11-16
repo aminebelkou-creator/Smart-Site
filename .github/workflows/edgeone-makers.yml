@@ -59,8 +59,11 @@ jobs:
           node-version: 20.18.0
           cache: pnpm
 
+      # Flat node_modules (like npm): with pnpm's symlinked layout Turbopack emits
+      # hashed externals (.next/node_modules/<pkg>-<hash>) that EdgeOne's packaging
+      # drops, so every SSR request failed with "Cannot find module typescript-<hash>".
       - name: Install
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --config.node-linker=hoisted
 
       - name: Build and deploy
         env:

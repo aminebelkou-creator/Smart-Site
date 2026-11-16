@@ -10,7 +10,7 @@ Stack: EdgeOne Makers (Next.js app, CDN) + MongoDB Atlas (free M0 is enough for 
 |---|---|---|
 | Cloud Functions runtime | Node 20.19.3 (measured) | `engines` relaxed to `>=20.9.0`; build on Node 20 so incompatible packages fail at build time, not in production. `src/` uses no Node 21+ APIs. |
 | Builder | 4 cores / 6 GB, 20 min; Next.js is adapted with `@edgeone/opennextjs-pages` (OpenNext) | `build:edgeone` uses a 3.5 GB V8 heap (Turbopack native memory needs the rest of the 6 GB). |
-| Package manager | docs list pnpm ≤ 9 | `edgeone.json` runs pnpm 10.34.8 through `npx`. |
+| Package manager | docs list pnpm ≤ 9 | `edgeone.json` runs pnpm 10.34.8 through `npx`, with `node-linker=hoisted`: pnpm's symlinked layout makes Turbopack emit hashed externals (`.next/node_modules/<pkg>-<hash>`) that EdgeOne does not package. |
 | Function bundle | 128 MiB incl. dependencies | Postgres adapter removed; sharp off on EdgeOne; source maps and `.d.ts` excluded. `typescript` must stay (loaded at server start). |
 | Request body | 6 MB (Cloud Functions) | Media uploads go browser → bucket (`clientUploads`). |
 | Persistent disk | none | `SMARTSITE_MEDIA_STORAGE=s3` is mandatory on Makers. |

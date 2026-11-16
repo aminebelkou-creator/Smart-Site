@@ -536,3 +536,32 @@ section.text-white .agi-faq__answer p {
 .rich-text li::marker {
   color: var(--agi-gold);
 }
+
+/* ---------- hero with a side image (AGI seal) ---------- */
+.agi-hero-split {
+  display: grid;
+  gap: clamp(24px, 4vw, 72px);
+  align-items: center;
+}
+
+@media (min-width: 900px) {
+  .agi-hero-split {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  }
+}
+
+.agi-hero-side {
+  display: none;
+  justify-self: center;
+  width: min(100%, 460px);
+}
+
+.agi-hero-side img {
+  filter: drop-shadow(0 30px 60px rgb(0 0 0 / 0.35));
+}
+
+@media (min-width: 900px) {
+  .agi-hero-side {
+    display: block;
+  }
+}

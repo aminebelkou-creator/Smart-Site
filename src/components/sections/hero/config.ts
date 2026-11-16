@@ -59,6 +59,17 @@ export const Hero: Block = {
             mimeType: { contains: "image" },
           },
         },
+        {
+          name: "sideImage",
+          type: "upload",
+          relationTo: "media",
+          admin: {
+            description: "Optional image beside the text (e.g. the AGI seal). Shown on wider screens.",
+          },
+          filterOptions: {
+            mimeType: { contains: "image" },
+          },
+        },
       ],
     },
     {

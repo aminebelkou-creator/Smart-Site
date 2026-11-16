@@ -70,7 +70,7 @@ const heroVariants = tv({
   },
 })
 
-export function HeroComponent(props: HeroBlock) {
+export function HeroComponent(props: HeroBlock & { sideImage?: unknown }) {
   const {
     preheading,
     heading,
@@ -79,6 +79,7 @@ export function HeroComponent(props: HeroBlock) {
     alignment = "left",
     size = "large",
     backgroundImage,
+    sideImage,
     visualStyle = "classic",
     sectionSettings,
   } = props
@@ -157,7 +158,7 @@ export function HeroComponent(props: HeroBlock) {
         </div>
       ) : null}
 
-      <div className={contentClassName}>
+      <div className={sideImage && typeof sideImage === "object" ? `${contentClassName} agi-hero-split` : contentClassName}>
         <div
           className={wrapperClassName}
           data-animate="fade-up"
@@ -199,6 +200,11 @@ export function HeroComponent(props: HeroBlock) {
             </div>
           ) : null}
         </div>
+        {sideImage && typeof sideImage === "object" ? (
+          <div className="agi-hero-side" data-animate="fade-up">
+            <Media resource={sideImage} imgClassName="h-auto w-full object-contain" priority />
+          </div>
+        ) : null}
       </div>
     </Section>
   )

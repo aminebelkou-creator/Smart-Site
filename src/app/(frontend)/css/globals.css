@@ -24,4 +24,5 @@
 @import "./utilities.css";
 
 /* AGI brand typography (unlayered, loaded last) */
+@import "./fonts.css";
 @import "./agi.css";

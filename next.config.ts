@@ -130,7 +130,19 @@ const nextConfig = {
   env: { SMARTSITE_IMAGE_PROCESSING: IMAGE_PROCESSING },
   ...(IMAGE_PROCESSING === "off"
     ? {
-        webpack: (config: any) => {
+        webpack: (config: any, { isServer }: { isServer: boolean }) => {
+          // Next lists sharp as a default server external, which bypasses aliases:
+          // un-externalize it so the alias below bundles the stub instead.
+          if (isServer && Array.isArray(config.externals)) {
+            config.externals = config.externals.map((external: any) =>
+              typeof external === "function"
+                ? (ctx: any, callback: any) =>
+                    ctx?.request === "sharp" || ctx?.request?.startsWith("@img/sharp")
+                      ? callback()
+                      : external(ctx, callback)
+                : external
+            )
+          }
           config.resolve.alias = {
             ...config.resolve.alias,
             sharp$: path.resolve(projectRoot, SHARP_STUB),

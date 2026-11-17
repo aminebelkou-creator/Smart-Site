@@ -1,0 +1,43 @@
+# angliamorocco.org → AGI website (Anglia Morocco is an AGI division; its site was merged in Nov 2026).
+# Activate once angliamorocco.org (and www) DNS A records point at the VPS:
+#   1. set AGI_MAIN_HOST in the proxy environment (e.g. AGI_MAIN_HOST=www.example.ma)
+#   2. import this file from the Caddyfile:   import /etc/caddy/angliamorocco-redirects.caddy
+#   3. reload Caddy. Caddy gets the HTTPS certificate for angliamorocco.org automatically.
+# Every old URL gets a permanent (301) redirect to its AGI equivalent; anything unknown goes to /anglia.
+angliamorocco.org, www.angliamorocco.org {
+	map {uri} {agi_path} {
+		~^/?$                                                         /anglia
+		~^/exams/?$                                                   /anglia-exams
+		~^/anglia-exam-dates(-2)?/?$                                  /anglia-exam-dates
+		~^/practice-resources/?$                                      /anglia-practice
+		~^/step-to-books(-2)?/?$                                      /anglia-books
+		~^/(citem|elementor-1438)/?$                                  /teachers-cite
+		~^/cefr/?$                                                    /anglia-cefr
+		~^/club-anglia/?$                                             /anglia
+		~^/angliamorocco-networks-and-centers-12-regions/?$           /anglia-network
+		~^/special-arrangements/?$                                    /anglia-special-arrangements
+		~^/faq/?$                                                     /anglia-faq
+		~^/about/?$                                                   /anglia-about
+		~^/news/?$                                                    /journal
+		~^/contact/?$                                                 /contact
+		~^/anglia-morocco-new-online-examinations/?$                  /anglia-online-exams
+		~^/privacy-policy/?$                                          /privacy
+		~^/cookies-policy/?$                                          /cookies
+		~^/terms-and-conditions/?$                                    /terms
+		~^/sch-dashboard/?$                                           /anglia
+		~^/proud-that-everyone-can-take-an-anglia-exam/?$             /journal/proud-that-everyone-can-take-an-anglia-exam
+		~^/julie-our-newest-franchisee-from-morocco-an-article-published-in-the-anglia-november-newsletter-2021/?$ /journal/julie-our-newest-franchisee-from-morocco-an-article-published-in-the-anglia-november-newsletter-2021
+		~^/chichester-college-group-selected-for-queens-anniversary-prize/?$ /journal/chichester-college-group-selected-for-queens-anniversary-prize
+		~^/(ar/)?anglia-mastery-qualification-awarded-ucas-tariff-points(-2)?/?$ /journal/anglia-mastery-qualification-awarded-ucas-tariff-points-2
+		~^/ar/practice-resources-ar/?$                                /ar/anglia-practice
+		# Arabic pages (WordPress serves them percent-encoded)
+		~^/ar/(%D8%A7%D9%84%D8%B1%D8%A6%D9%8A%D8%B3%D9%8A%D8%A9|%d8%a7%d9%84%d8%b1%d8%a6%d9%8a%d8%b3%d9%8a%d8%a9|الرئيسية)/?$   /ar/anglia
+		~^/ar/(%D8%A7%D8%AE%D8%A8%D8%A7%D8%B1%D9%86%D8%A7|%d8%a7%d8%ae%d8%a8%d8%a7%d8%b1%d9%86%d8%a7|اخبارنا)/?$                 /journal
+		~^/ar/(%D8%A7%D9%84%D8%A5%D9%85%D8%AA%D8%AD%D8%A7%D9%86%D8%A7%D8%AA|%d8%a7%d9%84%d8%a5%d9%85%d8%aa%d8%ad%d8%a7%d9%86%d8%a7%d8%aa|الإمتحانات)/?$ /ar/anglia-exams
+		~^/ar/(%D9%85%D9%86-%D9%86%D8%AD%D9%86|%d9%85%d9%86-%d9%86%d8%ad%d9%86|من-نحن)/?$                                     /ar/anglia-about
+		~^/ar/(%D8%AA%D9%88%D8%A7%D8%B5%D9%84-%D9%85%D8%B9%D9%86%D8%A7|%d8%aa%d9%88%d8%a7%d8%b5%d9%84-%d9%85%d8%b9%d9%86%d8%a7|تواصل-معنا)/?$ /ar/contact
+		~^/ar(/.*)?$                                                  /ar/anglia
+		default                                                       /anglia
+	}
+	redir https://{$AGI_MAIN_HOST}{agi_path} permanent
+}

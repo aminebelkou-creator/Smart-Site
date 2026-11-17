@@ -13,6 +13,7 @@ import { getI18nConfig } from "@/lib/features"
 import { generateRootLayoutMetadata } from "@/app/(frontend)/layout-metadata"
 
 import { LocaleSync } from "@/components/locale/locale-sync"
+import { FormPanels } from "@/components/forms/form-panels"
 import { LOCALE_HEAD_SCRIPT } from "@/lib/locale"
 
 import "@/app/(frontend)/css/globals.css"
@@ -59,6 +60,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
       <body suppressHydrationWarning>
         <LocaleSync />
+        <FormPanels />
         {gtmId && <GoogleTagManager gtmId={gtmId} />}
         {gaId && <GoogleAnalytics gaId={gaId} />}
 

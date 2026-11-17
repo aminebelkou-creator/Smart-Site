@@ -136,7 +136,7 @@ export const FormBlock: React.FC<
 
       <div
         className={cn(
-          "border-dark-border p-content md:p-content-lg rounded-2xl border bg-white"
+          "agi-form-card border-dark-border p-content md:p-content-lg rounded-2xl border bg-white"
         )}
       >
         <FormProvider {...formMethods}>
@@ -150,7 +150,7 @@ export const FormBlock: React.FC<
 
           {!hasSubmitted && (
             <form id={formID} onSubmit={handleSubmit(onSubmit)}>
-              <div className="gap-content flex flex-col">
+              <div className="agi-form-fields flex flex-wrap gap-x-4 gap-y-5">
                 {formFromProps?.fields?.map((field, index) => {
                   const FieldComponent = fields[
                     field.blockType as keyof typeof fields

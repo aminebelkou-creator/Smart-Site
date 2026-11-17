@@ -571,9 +571,11 @@ section.text-white .agi-faq__answer p {
    ===================================================================== */
 
 /* ---------- hero: visible immediately, short CSS fade (no scroll trigger) ---------- */
+/* Movement only, never hidden: the headline is the page's largest content and must
+   be readable even if animations are paused (background tabs, power saving). */
 @keyframes agi-rise {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: none; }
+  from { transform: translateY(10px); }
+  to { transform: none; }
 }
 .agi-hero-copy { animation: agi-rise 0.45s ease-out both; }
 .agi-hero-side.agi-hero-copy { animation-delay: 0.1s; }

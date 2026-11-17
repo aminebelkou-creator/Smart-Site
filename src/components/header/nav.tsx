@@ -105,7 +105,7 @@ const NavItemWithDropdown: React.FC<{
     <li className="group relative flex h-full items-center">
       <CMSLink
         {...item?.link}
-        className="text-dark hover:text-dark gap-content-xs flex h-full cursor-pointer items-center no-underline transition-colors duration-100"
+        className="text-dark hover:text-dark flex h-full cursor-pointer items-center gap-0 no-underline transition-colors duration-100"
       >
         <span>{item?.link?.label}</span>
         <ChevronDown className="text-dark-600 ml-1 h-4 w-4 transition-transform duration-300 group-hover:rotate-180" />

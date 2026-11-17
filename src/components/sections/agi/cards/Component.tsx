@@ -27,6 +27,7 @@ export type CardsBlockProps = {
     image?: any
     link?: CardLink | null
   }> | null
+  moreLink?: CardLink | null
   sectionSettings?: SectionSettings | null
 }
 
@@ -43,7 +44,7 @@ function hasLink(link?: CardLink | null) {
 }
 
 export function CardsComponent(props: CardsBlockProps) {
-  const { kicker, heading, intro, columns, style, cards, sectionSettings } = props
+  const { kicker, heading, intro, columns, style, cards, moreLink, sectionSettings } = props
   const variant = style ?? "boxed"
 
   return (
@@ -85,6 +86,13 @@ export function CardsComponent(props: CardsBlockProps) {
             )
           )}
         </ul>
+      ) : null}
+      {hasLink(moreLink) ? (
+        <p className="agi-more-row">
+          <CMSLink {...(moreLink as any)} appearance="link" className="agi-more">
+            {moreLink?.label || "See all"}
+          </CMSLink>
+        </p>
       ) : null}
     </Section>
   )

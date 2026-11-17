@@ -756,3 +756,7 @@ body:has(.agi-fx) footer::before {
   .agi-fx .agi-card:hover .agi-card__media img,
   .agi-fx .border-dark-border.bg-neutral:hover img { transform: none; }
 }
+
+/* "See all" link under a cards grid */
+.agi-more-row { margin: clamp(18px, 2vw, 28px) 0 0; }
+.agi-more-row .agi-more { padding-top: 0; font-size: 14px; }

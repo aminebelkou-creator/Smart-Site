@@ -86,6 +86,14 @@ export const Cards: Block = {
         link({ optional: true, overrides: { label: "Link (optional)" } }),
       ],
     },
+    link({
+      optional: true,
+      overrides: {
+        name: "moreLink",
+        label: "Link under the cards (optional)",
+        admin: { description: "e.g. “All journal entries” or “All accreditation and memberships”." },
+      },
+    }),
     sectionSettings(),
   ],
 }

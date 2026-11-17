@@ -764,3 +764,12 @@ body:has(.agi-fx) footer::before {
 /* Rich-text links on dark sections (they inherited navy and disappeared) */
 section.text-white a:not([class]) { color: var(--agi-gold); text-underline-offset: 3px; }
 section.text-white a:not([class]):hover { color: #fff; }
+
+/* Accessibility: the brand gold (#C9A227) is only 2.2–2.4:1 on white/paper.
+   On light sections use a deeper "ink" gold (3.9–4.2:1) for text and icons;
+   dark sections keep the bright gold. */
+:root { --agi-gold-ink: #9a7612; }
+section:not(.text-white) :is(.text-gradient, .agi-card__num, .agi-fact__value, .agi-card__icon) {
+  color: var(--agi-gold-ink);
+}
+section:not(.text-white) .rich-text li::marker { color: var(--agi-gold-ink); }

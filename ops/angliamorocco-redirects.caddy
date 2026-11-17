@@ -5,7 +5,7 @@
 #   3. reload Caddy. Caddy gets the HTTPS certificate for angliamorocco.org automatically.
 # Every old URL gets a permanent (301) redirect to its AGI equivalent; anything unknown goes to /anglia.
 angliamorocco.org, www.angliamorocco.org {
-	map {uri} {agi_path} {
+	map {path} {agi_path} {
 		~^/?$                                                         /anglia
 		~^/exams/?$                                                   /anglia-exams
 		~^/anglia-exam-dates(-2)?/?$                                  /anglia-exam-dates

@@ -1093,3 +1093,5 @@ section.agi-anglia.bg-neutral .agi-cards--timeline .agi-card::before { box-shado
 .agi-anglia :is(a, button).bg-secondary:hover { background-color: #025e97; }
 /* Hero already shows a picture (e.g. the Anglia logo itself): no badge */
 section.agi-anglia:has(.agi-hero-side) .agi-hero-copy::before { display: none; }
+/* Card photos: keep faces in frame (people are usually in the upper part) */
+.agi-card__media img { object-position: 50% 22%; }

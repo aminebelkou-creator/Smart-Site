@@ -901,3 +901,9 @@ html[data-agi-panels] section.agi-form-panel:not(.is-active) { display: none; }
 .agi-form-fields label { display: block; }
 .agi-form-fields label .required { margin-inline-start: 2px; color: var(--agi-red); }
 .agi-field button[role="combobox"], .agi-field [data-slot="select-trigger"] { width: 100%; }
+@media (max-width: 767px) {
+  .agi-form-chooser .agi-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .agi-form-chooser .agi-card { padding: 12px; }
+  .agi-form-chooser .agi-card p { display: none; }
+  .agi-form-chooser .agi-card h3 { font-size: 16px; }
+}

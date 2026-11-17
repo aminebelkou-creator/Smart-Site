@@ -59,7 +59,12 @@ function isActive(pathname: string, link?: NavItemLink | null, children?: Array<
   const paths = [linkPath(link), ...(children || []).map(c => linkPath(c.child?.link))].filter(
     (p): p is string => Boolean(p) && p !== "/"
   )
-  return paths.some(p => pathname === p || pathname.startsWith(p + "/"))
+  const bare = pathname.replace(/^\/(fr|ar)(?=\/|$)/, "") || "/"
+  return paths.some(p => {
+    const q = p.replace(/^\/(fr|ar)(?=\/|$)/, "") || "/"
+    // Section families: /anglia covers /anglia-exams, /anglia-faq, …
+    return bare === q || bare.startsWith(q + "/") || (q === "/anglia" && bare.startsWith("/anglia-"))
+  })
 }
 
 export const HeaderNavigation: React.FC<HeaderNavigationProps> = ({ data, search, uris }) => {

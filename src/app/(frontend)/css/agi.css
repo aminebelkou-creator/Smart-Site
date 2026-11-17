@@ -1024,3 +1024,62 @@ section.text-white .agi-cards--timeline .agi-card::before { box-shadow: 0 0 0 4p
   letter-spacing: 0; text-transform: none; color: var(--agi-gold-ink); line-height: 1;
 }
 section.text-white .agi-cards--timeline .agi-tag { color: var(--agi-gold); }
+
+/* =====================================================================
+   ANGLIA MOROCCO identity (AGI division) – opt-in per section with the
+   class "agi-anglia" (set on every section of the Anglia pages).
+   Palette from angliamorocco.org: blue #0082D0, deep #025E97 / #03379F,
+   navy #000F23, grey #67757F, light #F7F7F7; flag accents from the
+   Anglia Morocco logo (Moroccan red #C1272D, green #006233).
+   ===================================================================== */
+.agi-anglia {
+  --anglia-blue: #0082d0;
+  --anglia-ink: #006bad;      /* blue for text/icons on light (5.3:1) */
+  --anglia-deep: #025e97;
+  --anglia-royal: #03379f;
+  --anglia-navy: #000f23;
+  --anglia-red: #c1272d;
+  --anglia-green: #006233;
+  --agi-navy: #00264d;
+  --agi-grey: #56636d;
+  --agi-red: var(--anglia-ink);
+  --agi-gold: var(--anglia-blue);
+  --agi-gold-ink: var(--anglia-ink);
+  --color-primary: #0071bc;
+  --color-primary-500: #0071bc;
+  --color-primary-600: #025e97;
+  --color-primary-700: #03379f;
+  --color-dark: #025e97;
+  --color-dark-600: #025e97;
+  --color-dark-700: #024f80;
+  --color-dark-800: #03379f;
+  --color-dark-950: #000f23;
+  --color-neutral: #f2f7fb;
+  --color-neutral-100: #f2f7fb;
+}
+section.agi-anglia.bg-dark {
+  background-image: linear-gradient(135deg, #0273b8 0%, #025e97 45%, #03379f 100%);
+}
+section.agi-anglia.text-white {
+  --agi-gold: #9bd4ff;
+  --agi-red: #9bd4ff;
+}
+section.agi-anglia.text-white :is(.agi-card__icon, .agi-fact__value) { color: #9bd4ff; }
+/* Anglia ribbon: blue · red · green (the Anglia Morocco logo) */
+.agi-fx.agi-anglia .agi-kicker::before,
+.agi-fx.agi-anglia:not(:has(.agi-head)) :is(h1, h2):first-of-type::before {
+  background: linear-gradient(90deg, var(--anglia-blue) 0 33.3%, var(--anglia-red) 33.3% 66.6%, var(--anglia-green) 66.6% 100%);
+}
+section.text-white.agi-fx.agi-anglia .agi-kicker::before,
+section.text-white.agi-fx.agi-anglia:not(:has(.agi-head)) :is(h1, h2):first-of-type::before {
+  background: linear-gradient(90deg, #fff 0 33.3%, var(--anglia-red) 33.3% 66.6%, var(--anglia-green) 66.6% 100%);
+}
+/* Logo badge above every Anglia page title */
+.agi-anglia .agi-hero-copy::before {
+  content: ""; display: block; width: 72px; height: 74px; margin-bottom: 18px;
+  background: url(/anglia/anglia-morocco-logo.webp) left center / contain no-repeat;
+}
+[dir="rtl"] .agi-anglia .agi-hero-copy::before { background-position: right center; }
+.agi-anglia .agi-cards--boxed .agi-card:hover { border-color: var(--anglia-blue); }
+.agi-anglia .agi-cards--timeline .agi-card::before { background: var(--anglia-blue); }
+section.agi-anglia.bg-neutral .agi-cards--timeline .agi-card::before { box-shadow: 0 0 0 4px #f2f7fb; }

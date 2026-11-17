@@ -1091,3 +1091,5 @@ section.text-white.agi-fx.agi-anglia:not(:has(.agi-head)) :is(h1, h2):first-of-t
 section.agi-anglia.bg-neutral .agi-cards--timeline .agi-card::before { box-shadow: 0 0 0 4px #f2f7fb; }
 .agi-anglia :is(a, button).bg-secondary { color: #fff; }
 .agi-anglia :is(a, button).bg-secondary:hover { background-color: #025e97; }
+/* Hero already shows a picture (e.g. the Anglia logo itself): no badge */
+section.agi-anglia:has(.agi-hero-side) .agi-hero-copy::before { display: none; }

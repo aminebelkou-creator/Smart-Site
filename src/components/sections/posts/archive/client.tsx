@@ -159,13 +159,13 @@ function PostsArchiveCard(props: {
   return (
     <article
       className={cn(
-        "flex h-full flex-col overflow-hidden rounded-2xl",
+        "agi-post-card flex h-full flex-col overflow-hidden rounded-2xl",
         appearanceClassMap[appearance],
         cardClassName
       )}
     >
       {image ? (
-        <div className="relative aspect-[4/3] w-full overflow-hidden">
+        <div className="agi-post-card__media relative aspect-[4/3] w-full overflow-hidden">
           <Image
             src={image.url}
             alt={image.alt || post.title || "Post image"}
@@ -177,13 +177,13 @@ function PostsArchiveCard(props: {
       ) : null}
 
       <div className="flex flex-1 flex-col gap-content p-content md:p-content-lg">
-        <div className="flex flex-wrap items-center gap-content-sm text-xs uppercase tracking-[0.18em]">
+        <div className="agi-post-card__meta flex flex-wrap items-center gap-content-sm text-xs uppercase tracking-[0.18em]">
           {publishDate ? <span className={metaClassName}>{publishDate}</span> : null}
           {readingTime ? <span className={metaClassName}>{`${readingTime} min read`}</span> : null}
         </div>
 
         {categories.length > 0 ? (
-          <div className="flex flex-wrap items-center gap-content-sm text-xs uppercase tracking-[0.18em]">
+          <div className="agi-post-card__cats flex flex-wrap items-center gap-content-sm text-xs uppercase tracking-[0.18em]">
             {categories.map(category => (
               <span
                 key={category}
@@ -197,7 +197,7 @@ function PostsArchiveCard(props: {
 
         <div className="flex flex-col gap-content-sm">
           {href ? (
-            <Link href={href} className="text-balance text-h3 hover:text-primary">
+            <Link href={href} className="agi-post-card__title text-balance text-h3 hover:text-primary">
               {post.title}
             </Link>
           ) : (
@@ -205,7 +205,7 @@ function PostsArchiveCard(props: {
           )}
 
           {showExcerpt ? (
-            <p className={cn("text-base", metaClassName)}>{post.excerpt}</p>
+            <p className={cn("agi-post-card__excerpt text-base", metaClassName)}>{post.excerpt}</p>
           ) : null}
         </div>
       </div>

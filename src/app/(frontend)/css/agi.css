@@ -773,3 +773,16 @@ section:not(.text-white) :is(.text-gradient, .agi-card__num, .agi-fact__value, .
   color: var(--agi-gold-ink);
 }
 section:not(.text-white) .rich-text li::marker { color: var(--agi-gold-ink); }
+
+/* ---------- journal posts ---------- */
+.agi-post-hero .rounded-full {
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  color: var(--agi-red);
+}
+section.text-white .agi-post-hero .rounded-full { color: var(--agi-gold); }
+.agi-post-hero h1 { font-size: clamp(34px, 4.2vw, 60px); }

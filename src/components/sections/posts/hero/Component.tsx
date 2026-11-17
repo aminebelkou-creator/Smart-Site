@@ -154,7 +154,7 @@ export function PostsHeroComponent(props: PostsHeroBlock & PageData) {
     excerpt,
     media: mediaSlot,
   } = postsHeroVariants({
-    size: "large",
+    size: "small",
     alignment: "left",
     tone,
     mediaPresence: hasFeaturedImage ? "with" : "without",
@@ -175,11 +175,7 @@ export function PostsHeroComponent(props: PostsHeroBlock & PageData) {
     <Section sectionSettings={sectionSettings} className={sectionClassName}>
       <div className={contentClassName}>
         <div
-          className={wrapperClassName}
-          data-animate="fade-up"
-          data-animate-distance="24"
-          data-animate-stagger="0.1"
-          data-animate-target="[data-animate-child]"
+          className={`${wrapperClassName} agi-hero-copy agi-post-hero`}
         >
           <div className={copyClassName}>
             {categories.length > 0 ? (

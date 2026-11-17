@@ -36,6 +36,7 @@ export const Cards: Block = {
             { label: "Boxed cards", value: "boxed" },
             { label: "Plain (no box)", value: "plain" },
             { label: "Numbered steps", value: "numbered" },
+            { label: "Timeline (tag = year or date)", value: "timeline" },
             { label: "Logo strip (images only)", value: "logos" },
           ],
           admin: { width: "50%" },

@@ -17,7 +17,7 @@ export type CardsBlockProps = {
   heading?: string | null
   intro?: string | null
   columns?: "2" | "3" | "4" | "5" | null
-  style?: "boxed" | "plain" | "numbered" | "logos" | null
+  style?: "boxed" | "plain" | "numbered" | "logos" | "timeline" | null
   cards?: Array<{
     id?: string | null
     tag?: string | null

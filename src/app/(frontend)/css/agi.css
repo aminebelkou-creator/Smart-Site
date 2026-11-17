@@ -998,3 +998,29 @@ html[data-agi-panels] section.agi-form-panel:not(.is-active) { display: none; }
 @media (prefers-reduced-motion: reduce) {
   .agi-mega, .agi-nav-link::after { transition: none; }
 }
+
+/* ---------- Headings on dark (navy) sections ----------
+   Base heading colour is ink-navy, which vanished on navy sections without
+   an explicit override (e.g. pages without the agi-fx layer). */
+section.text-white :is(h1, h2, h3, h4):not(:where(.bg-white, .agi-form-card, .agi-mega) *) {
+  color: #fff;
+}
+
+/* ---------- Cards: timeline style (tag = year / date) ---------- */
+.agi-cards--timeline { row-gap: clamp(26px, 3vw, 40px); }
+.agi-cards--timeline .agi-card {
+  position: relative; padding-top: 26px; border-top: 2px solid rgb(10 49 97 / 0.15);
+}
+.agi-cards--timeline .agi-card::before {
+  content: ""; position: absolute; top: -8px; inset-inline-start: 0;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: var(--agi-gold); box-shadow: 0 0 0 4px #fff;
+}
+section.bg-neutral .agi-cards--timeline .agi-card::before { box-shadow: 0 0 0 4px #F6F5F1; }
+section.text-white .agi-cards--timeline .agi-card { border-color: rgb(255 255 255 / 0.2); }
+section.text-white .agi-cards--timeline .agi-card::before { box-shadow: 0 0 0 4px var(--agi-navy); }
+.agi-cards--timeline .agi-tag {
+  font-family: var(--font-heading); font-size: clamp(26px, 2.4vw, 34px); font-weight: 300;
+  letter-spacing: 0; text-transform: none; color: var(--agi-gold-ink); line-height: 1;
+}
+section.text-white .agi-cards--timeline .agi-tag { color: var(--agi-gold); }

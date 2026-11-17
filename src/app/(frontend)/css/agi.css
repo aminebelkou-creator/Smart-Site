@@ -760,3 +760,7 @@ body:has(.agi-fx) footer::before {
 /* "See all" link under a cards grid */
 .agi-more-row { margin: clamp(18px, 2vw, 28px) 0 0; }
 .agi-more-row .agi-more { padding-top: 0; font-size: 14px; }
+
+/* Rich-text links on dark sections (they inherited navy and disappeared) */
+section.text-white a:not([class]) { color: var(--agi-gold); text-underline-offset: 3px; }
+section.text-white a:not([class]):hover { color: #fff; }

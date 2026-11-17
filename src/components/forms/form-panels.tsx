@@ -49,9 +49,20 @@ export function FormPanels() {
 
     activate(false)
     const onHash = () => activate(true)
+    // Next.js links change the hash with pushState, which fires no "hashchange":
+    // also react to clicks on links that point at one of the panels.
+    const onClick = (e: MouseEvent) => {
+      const a = (e.target as Element | null)?.closest?.("a[href]")
+      const target = a?.getAttribute("href")?.split("#")[1]?.split("/")[0]
+      if (target && ids.includes(target)) window.setTimeout(() => activate(true), 0)
+    }
     window.addEventListener("hashchange", onHash)
+    window.addEventListener("popstate", onHash)
+    document.addEventListener("click", onClick)
     return () => {
       window.removeEventListener("hashchange", onHash)
+      window.removeEventListener("popstate", onHash)
+      document.removeEventListener("click", onClick)
       delete root.dataset.agiPanels
     }
   }, [pathname])

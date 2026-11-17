@@ -24,7 +24,7 @@ const LogoPrimary: React.FC<LogoProps> = ({ className = "", ...props }) => (
     />
     <span className="flex flex-col leading-none">
       <span className="font-heading text-[26px] font-medium tracking-[0.02em]">AGI</span>
-      <span className="text-neutral-600 mt-1 hidden text-[10px] tracking-[0.18em] uppercase sm:block">
+      <span className="text-neutral-600 mt-1 hidden text-[10px] tracking-[0.18em] uppercase sm:block xl:hidden min-[1440px]:block">
         American Group International
       </span>
     </span>

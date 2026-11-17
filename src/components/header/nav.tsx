@@ -46,8 +46,8 @@ export const HeaderNavigation: React.FC<HeaderNavigationProps> = ({ data, search
     ) || []
 
   return (
-    <nav className="hidden h-full items-center min-[1440px]:flex">
-      <ul className="gap-content-sm flex h-full flex-nowrap items-center whitespace-nowrap">
+    <nav className="hidden h-full items-center xl:flex">
+      <ul className="flex h-full flex-nowrap items-center gap-[14px] whitespace-nowrap">
         {navItems.map(({ item }, i: number) => {
           if (item?.hasDropdown && item?.subItems && item?.subItems?.length > 0) {
             return <NavItemWithDropdown key={i} item={item} />
@@ -108,7 +108,7 @@ const NavItemWithDropdown: React.FC<{
         className="text-dark hover:text-dark gap-content-xs flex h-full cursor-pointer items-center no-underline transition-colors duration-100"
       >
         <span>{item?.link?.label}</span>
-        <ChevronDown className="text-dark-600 ml-content-xs h-4 w-4 transition-transform duration-300 group-hover:rotate-180" />
+        <ChevronDown className="text-dark-600 ml-1 h-4 w-4 transition-transform duration-300 group-hover:rotate-180" />
       </CMSLink>
 
       <div className="absolute top-full left-0 h-1 w-full opacity-0 group-hover:opacity-100" />

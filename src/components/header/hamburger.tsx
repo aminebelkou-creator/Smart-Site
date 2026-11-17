@@ -65,7 +65,7 @@ export function Hamburger({ isOpen, onClick, className }: HamburgerProps) {
       ref={hamburgerRef}
       onClick={onClick}
       className={cn(
-        "relative z-[1001] flex h-12 w-12 flex-col items-center justify-center rounded-full transition-colors duration-200 min-[1440px]:hidden",
+        "relative z-[1001] flex h-12 w-12 flex-col items-center justify-center rounded-full transition-colors duration-200 xl:hidden",
         "hover:bg-neutral",
         className
       )}

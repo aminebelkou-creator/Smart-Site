@@ -13,6 +13,8 @@ import { Hamburger } from "@/components/header/hamburger"
 import LogoPrimary from "@/components/logos/logo"
 import { SearchCommandLauncher } from "@/components/search/search-dialog"
 
+const HOME_LABEL: Record<string, string> = { en: "Home", fr: "Accueil", ar: "الرئيسية" }
+
 /*************************************************************************/
 /*  MOBILE NAVIGATION WITH SHEET AND CUSTOM HAMBURGER
 /*************************************************************************/
@@ -44,6 +46,10 @@ export const MobileNavUpdated: React.FC<MobileNavProps> = ({
       locale
     ) || []
 
+  const applyItem = navItems.find(({ item }) => item?.link?.appearance === "button")?.item
+  const menuItems = navItems.filter(({ item }) => item?.link?.appearance !== "button")
+  const homeHref = locale === "en" ? "/" : `/${locale}`
+
   function handleLinkClick() {
     setOpen(false)
   }
@@ -54,98 +60,83 @@ export const MobileNavUpdated: React.FC<MobileNavProps> = ({
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-      <Hamburger isOpen={open} onClick={handleToggle} />
+      {/* Hidden while open: the drawer has its own close button (one ✕, not two). */}
+      {open ? null : <Hamburger isOpen={open} onClick={handleToggle} />}
       <SheetContent
         side={locale === "ar" ? "right" : "left"}
-        className="smartsite-mobile-menu border-dark-border fixed inset-y-0 left-0 z-[1000] h-full w-[80%] border-r bg-white p-0 min-[1440px]:hidden"
+        className="smartsite-mobile-menu border-dark-border fixed inset-y-0 left-0 z-[1000] h-full w-[80%] border-r bg-white p-0 xl:hidden"
       >
         <div className="relative flex h-full w-full flex-col overflow-hidden">
           <div className="border-dark-border px-section-x py-content-lg flex items-center justify-between border-b">
             <Link href="/" aria-label="Return to homepage" onClick={handleLinkClick}>
               <LogoPrimary className="h-logo w-auto" />
             </Link>
-            <span className="text-dark-600 text-xs tracking-[0.18em] uppercase">
-              Menu
-            </span>
           </div>
 
           <div className="px-section-x py-section-sm flex-1 overflow-y-auto">
             <nav className="gap-content flex h-full flex-col">
               <SheetTitle className="sr-only">Menu</SheetTitle>
 
-              <div className="gap-content flex flex-1 flex-col">
-                <LanguageSwitch uris={uris} onNavigate={handleLinkClick} className="text-base" />
-                {search.enabled ? (
-                  <SearchCommandLauncher
-                    mode={search.mode}
-                    variant="button"
-                    className="!text-h6 text-dark text-left transition-colors"
-                    onNavigate={handleLinkClick}
-                  />
+              <div className="agi-mnav flex flex-1 flex-col">
+                {applyItem ? (
+                  <CMSLink
+                    {...applyItem.link}
+                    className="agi-mnav__apply"
+                    onClick={handleLinkClick}
+                  >
+                    {applyItem.link?.label}
+                  </CMSLink>
                 ) : null}
-                {navItems.map(({ item }, i: number) => {
-                  if (item?.hasDropdown && item?.subItems && item?.subItems?.length > 0) {
+
+                <Link href={homeHref} className="agi-mnav__top" onClick={handleLinkClick}>
+                  {HOME_LABEL[locale] ?? "Home"}
+                </Link>
+
+                {menuItems.map(({ item }, i: number) => {
+                  const subs = item?.hasDropdown ? item?.subItems ?? [] : []
+                  if (subs.length > 0) {
                     return (
-                      <div key={i} className="gap-content flex flex-col">
-                        <h3 className="text-dark">{item.link?.label}</h3>
-                        <div className="gap-content-sm pl-section-xs flex flex-col">
-                          {item.subItems.map((childItem, j: number) => {
-                            const child = childItem.child
-                            if (
-                              child.hasChildren &&
-                              child.subItems &&
-                              child.subItems.length > 0
-                            ) {
-                              return (
-                                <div key={j} className="gap-content-sm flex flex-col">
-                                  <h4 className="text-dark">{child.link?.label}</h4>
-                                  <div className="gap-content-sm pl-section-xs flex flex-col">
-                                    {child.subItems.map((subItem, k: number) => (
-                                      <CMSLink
-                                        key={k}
-                                        {...subItem.link}
-                                        className="text-dark-600 hover:text-dark transition-colors"
-                                        onClick={handleLinkClick}
-                                      >
-                                        {subItem.link?.label}
-                                      </CMSLink>
-                                    ))}
-                                  </div>
-                                </div>
-                              )
-                            }
-                            return (
-                              <div key={j}>
-                                <CMSLink
-                                  {...child.link}
-                                  className="text-dark-600 hover:text-dark transition-colors"
-                                  onClick={handleLinkClick}
-                                >
-                                  {child.link?.label}
-                                </CMSLink>
-                              </div>
-                            )
-                          })}
+                      <details key={i} className="agi-mnav__group">
+                        <summary className="agi-mnav__top">{item.link?.label}</summary>
+                        <div className="agi-mnav__subs">
+                          {subs.map((childItem, j: number) => (
+                            <CMSLink
+                              key={j}
+                              {...childItem.child.link}
+                              className="agi-mnav__sub"
+                              onClick={handleLinkClick}
+                            >
+                              {childItem.child.link?.label}
+                            </CMSLink>
+                          ))}
                         </div>
-                      </div>
-                    )
-                  } else {
-                    return (
-                      <CMSLink
-                        key={i}
-                        {...item.link}
-                        className={
-                          item.link?.appearance === "button"
-                            ? "self-start"
-                            : "!text-h6 text-dark transition-colors"
-                        }
-                        onClick={handleLinkClick}
-                      >
-                        {item.link?.label}
-                      </CMSLink>
+                      </details>
                     )
                   }
+                  return (
+                    <CMSLink
+                      key={i}
+                      {...item.link}
+                      appearance="link"
+                      className="agi-mnav__top"
+                      onClick={handleLinkClick}
+                    >
+                      {item.link?.label}
+                    </CMSLink>
+                  )
                 })}
+
+                <div className="agi-mnav__tools">
+                  <LanguageSwitch uris={uris} onNavigate={handleLinkClick} className="text-base" />
+                  {search.enabled ? (
+                    <SearchCommandLauncher
+                      mode={search.mode}
+                      variant="button"
+                      className="text-dark-600 text-left text-sm transition-colors"
+                      onNavigate={handleLinkClick}
+                    />
+                  ) : null}
+                </div>
               </div>
             </nav>
 

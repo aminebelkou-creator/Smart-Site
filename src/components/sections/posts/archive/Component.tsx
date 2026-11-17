@@ -1,3 +1,5 @@
+import { SectionIntro } from "@/components/sections/agi/intro"
+import { CMSLink } from "@/components/fields/link"
 import type { Media, PostsArchiveBlock, Post } from "@/payload-types"
 import type { PageData } from "@/lib/rendering/render-sections"
 import { getPostsWithPagination } from "@/lib/data/posts"
@@ -200,7 +202,14 @@ function PostsArchiveFallback(props: {
   )
 }
 
-export async function PostsArchiveComponent(props: PostsArchiveBlock & PageData) {
+type ArchiveExtras = {
+  kicker?: string | null
+  heading?: string | null
+  intro?: string | null
+  moreLink?: Record<string, any> | null
+}
+
+export async function PostsArchiveComponent(props: PostsArchiveBlock & PageData & ArchiveExtras) {
   const {
     postsPerPage,
     layout,
@@ -216,7 +225,14 @@ export async function PostsArchiveComponent(props: PostsArchiveBlock & PageData)
     sort,
     document,
     sectionSettings,
+    kicker,
+    heading,
+    intro,
+    moreLink,
   } = props
+  const hasMoreLink = Boolean(
+    moreLink && (moreLink.type === "reference" ? moreLink.reference?.value : moreLink.url)
+  )
 
   const colorScheme = sectionSettings?.colorScheme ?? null
   const tone: "light" | "neutral" | "dark" =
@@ -271,6 +287,7 @@ export async function PostsArchiveComponent(props: PostsArchiveBlock & PageData)
 
   return (
     <Section sectionSettings={sectionSettings} containerClassName={containerClassName}>
+      <SectionIntro kicker={kicker} heading={heading} intro={intro} />
       <Suspense
         fallback={
           <PostsArchiveFallback
@@ -318,6 +335,13 @@ export async function PostsArchiveComponent(props: PostsArchiveBlock & PageData)
           showPageRange={shouldShowPageRange}
         />
       </Suspense>
+      {hasMoreLink ? (
+        <p className="agi-more-row">
+          <CMSLink {...(moreLink as any)} appearance="link" className="agi-more">
+            {moreLink?.label || "See all"}
+          </CMSLink>
+        </p>
+      ) : null}
     </Section>
   )
 }

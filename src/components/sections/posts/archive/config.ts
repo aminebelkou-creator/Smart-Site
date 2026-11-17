@@ -1,6 +1,8 @@
 import type { Block } from "payload"
 
 import { sectionSettings } from "@/components/fields/section"
+import { link } from "@/components/fields/link/link"
+import { introFields } from "@/components/sections/agi/fields"
 
 export const PostsArchive: Block = {
   slug: "posts-archive",
@@ -9,6 +11,7 @@ export const PostsArchive: Block = {
     group: "Blog",
   },
   fields: [
+    ...introFields(),
     {
       type: "collapsible",
       label: "Display",
@@ -140,6 +143,14 @@ export const PostsArchive: Block = {
         },
       ],
     },
+    link({
+      optional: true,
+      overrides: {
+        name: "moreLink",
+        label: "Link under the posts (optional)",
+        admin: { description: "e.g. “All journal entries” when showing the latest posts on another page." },
+      },
+    }),
     sectionSettings(),
   ],
 }

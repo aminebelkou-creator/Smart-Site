@@ -1,5 +1,10 @@
 import { getServerSideURL } from "@/lib/get-url"
 
+/* Media URLs can already be absolute (Payload serverURL); only prefix relative ones. */
+function abs(baseURL: string, url: string): string {
+  return /^https?:\/\//i.test(url) ? url : `${baseURL}${url}`
+}
+
 /*************************************************************************/
 /*  STRUCTURED DATA TYPES
 /*************************************************************************/
@@ -193,7 +198,7 @@ function generateOrganizationSchema(settings?: any): OrganizationSchema | null {
   }
 
   if (org.logo && typeof org.logo === "object" && org.logo.url) {
-    schema.logo = `${baseURL}${org.logo.url}`
+    schema.logo = abs(baseURL, org.logo.url)
   }
 
   if (org.foundingDate) {
@@ -247,7 +252,7 @@ function generateArticleSchema(
     typeof doc.seo.meta.image === "object" &&
     doc.seo.meta.image.url
   ) {
-    schema.image = `${baseURL}${doc.seo.meta.image.url}`
+    schema.image = abs(baseURL, doc.seo.meta.image.url)
   }
 
   if (doc.publishedAt) {
@@ -286,7 +291,7 @@ function generateArticleSchema(
       }
 
       if (team?.image?.url) {
-        person.image = `${baseURL}${team.image.url}`
+        person.image = abs(baseURL, team.image.url)
       }
 
       return person
@@ -328,7 +333,7 @@ function generatePersonSchema(
 
   const image = doc.image ?? doc.content?.image
   if (image && typeof image === "object" && image?.url) {
-    schema.image = `${baseURL}${image.url}`
+    schema.image = abs(baseURL, image.url)
   }
 
   if (organization) {
@@ -369,7 +374,7 @@ function generateServiceSchema(
     typeof doc.seo.meta.image === "object" &&
     doc.seo.meta.image.url
   ) {
-    schema.image = `${baseURL}${doc.seo.meta.image.url}`
+    schema.image = abs(baseURL, doc.seo.meta.image.url)
   }
 
   if (organization) {
@@ -398,7 +403,7 @@ function generateWebPageSchema(doc: any, baseURL: string): WebPageSchema {
     typeof doc.seo.meta.image === "object" &&
     doc.seo.meta.image.url
   ) {
-    schema.image = `${baseURL}${doc.seo.meta.image.url}`
+    schema.image = abs(baseURL, doc.seo.meta.image.url)
   }
 
   // Add breadcrumbs if available

@@ -57,13 +57,13 @@ export function PostCard(props: PostCardProps) {
   return (
     <article
       className={cn(
-        "flex h-full flex-col overflow-hidden rounded-2xl",
+        "agi-post-card flex h-full flex-col overflow-hidden rounded-2xl",
         appearanceClassMap[appearance],
         className
       )}
     >
       {image ? (
-        <div className="relative aspect-[4/3] w-full overflow-hidden">
+        <div className="agi-post-card__media relative aspect-[4/3] w-full overflow-hidden">
           <PayloadMedia
             resource={image}
             alt={image.alt || post.title || "Post image"}
@@ -74,7 +74,7 @@ export function PostCard(props: PostCardProps) {
       ) : null}
 
       <div className="gap-content p-content md:p-content-lg flex flex-1 flex-col">
-        <div className="gap-content-sm flex flex-wrap items-center text-xs tracking-[0.18em] uppercase">
+        <div className="agi-post-card__meta gap-content-sm flex flex-wrap items-center text-xs tracking-[0.18em] uppercase">
           {publishDate ? (
             <span className={metaTextClassMap[appearance]}>{publishDate}</span>
           ) : null}
@@ -86,7 +86,7 @@ export function PostCard(props: PostCardProps) {
         </div>
 
         {categories.length > 0 ? (
-          <div className="gap-content-sm flex flex-wrap items-center text-xs tracking-[0.18em] uppercase">
+          <div className="agi-post-card__cats gap-content-sm flex flex-wrap items-center text-xs tracking-[0.18em] uppercase">
             {categories.map(category => (
               <span
                 key={category}
@@ -105,7 +105,7 @@ export function PostCard(props: PostCardProps) {
 
         <div className="gap-content-sm flex flex-col">
           {href ? (
-            <Link href={href} className="text-h3 hover:text-primary text-balance">
+            <Link href={href} className="agi-post-card__title text-h3 hover:text-primary text-balance">
               {post.title}
             </Link>
           ) : (
@@ -113,7 +113,7 @@ export function PostCard(props: PostCardProps) {
           )}
 
           {showExcerpt ? (
-            <p className={cn("text-base", metaTextClassMap[appearance])}>
+            <p className={cn("agi-post-card__excerpt text-base", metaTextClassMap[appearance])}>
               {post.seo?.meta?.description || ""}
             </p>
           ) : null}

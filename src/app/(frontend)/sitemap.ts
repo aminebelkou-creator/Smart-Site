@@ -7,6 +7,10 @@ import {
 import { generateSitemap } from "@/lib/sitemaps/generator"
 import { getServerSideURL } from "@/lib/get-url"
 
+// Built at request time: a sitemap prerendered during the image build was empty
+// (the build has no live content), so search engines saw no URLs.
+export const dynamic = "force-dynamic"
+
 /*************************************************************************/
 /*  GENERATE SITEMAPS - ONE PER FRONTEND COLLECTION
 /*************************************************************************/

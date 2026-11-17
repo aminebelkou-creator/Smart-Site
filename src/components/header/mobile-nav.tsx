@@ -57,7 +57,7 @@ export const MobileNavUpdated: React.FC<MobileNavProps> = ({
       <Hamburger isOpen={open} onClick={handleToggle} />
       <SheetContent
         side={locale === "ar" ? "right" : "left"}
-        className="smartsite-mobile-menu border-dark-border fixed inset-y-0 left-0 z-[1000] h-full w-[80%] border-r bg-white p-0 lg:hidden"
+        className="smartsite-mobile-menu border-dark-border fixed inset-y-0 left-0 z-[1000] h-full w-[80%] border-r bg-white p-0 min-[1440px]:hidden"
       >
         <div className="relative flex h-full w-full flex-col overflow-hidden">
           <div className="border-dark-border px-section-x py-content-lg flex items-center justify-between border-b">

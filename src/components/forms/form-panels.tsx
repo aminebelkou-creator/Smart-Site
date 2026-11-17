@@ -25,8 +25,8 @@ export function FormPanels() {
     const ids = panels.map(p => p.id).filter(Boolean)
     const fromHash = () => decodeURIComponent(window.location.hash.slice(1)).split("/")[0]
 
-    const activate = (scroll: boolean) => {
-      const wanted = fromHash()
+    const activate = (scroll: boolean, forced?: string) => {
+      const wanted = forced || fromHash()
       const id = ids.includes(wanted) ? wanted : ids[0]
       panels.forEach(p => p.classList.toggle("is-active", p.id === id))
       document.querySelectorAll<HTMLAnchorElement>("a[href]").forEach(a => {
@@ -54,7 +54,7 @@ export function FormPanels() {
     const onClick = (e: MouseEvent) => {
       const a = (e.target as Element | null)?.closest?.("a[href]")
       const target = a?.getAttribute("href")?.split("#")[1]?.split("/")[0]
-      if (target && ids.includes(target)) window.setTimeout(() => activate(true), 0)
+      if (target && ids.includes(target)) window.setTimeout(() => activate(true, target), 0)
     }
     window.addEventListener("hashchange", onHash)
     window.addEventListener("popstate", onHash)

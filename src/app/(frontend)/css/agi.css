@@ -898,3 +898,6 @@ html[data-agi-panels] section.agi-form-panel:not(.is-active) { display: none; }
   box-shadow: inset 0 3px 0 var(--agi-gold);
 }
 .agi-form-chooser .agi-card.is-current h3 { color: var(--agi-navy); }
+.agi-form-fields label { display: block; }
+.agi-form-fields label .required { margin-inline-start: 2px; color: var(--agi-red); }
+.agi-field button[role="combobox"], .agi-field [data-slot="select-trigger"] { width: 100%; }

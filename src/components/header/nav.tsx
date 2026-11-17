@@ -8,11 +8,15 @@ import * as React from "react"
 import { usePathname } from "next/navigation"
 import { localeFromPath, pickLocalized } from "@/lib/locale"
 import { LanguageSwitch } from "@/components/locale/language-switch"
+import { AgiIcon } from "@/components/sections/agi/icons"
 
 type NavItemLink = NonNullable<HeaderType["navItems"]>[number]["item"]["link"]
 
 type ChildItemType = {
   link: NavItemLink
+  group?: string | null
+  icon?: string | null
+  description?: string | null
   hasChildren?: boolean | null
   subItems?: Array<{ link: NavItemLink }> | null
 }
@@ -36,8 +40,31 @@ interface HeaderNavigationProps {
  * Header Navigation - Main Navigation Of Website
  ****************************************************/
 
+/* Path a nav link points to ("/k12", "/forms"), or null for external links. */
+function linkPath(link?: NavItemLink | null): string | null {
+  if (!link) return null
+  const l = link as any
+  const raw =
+    l.type === "reference"
+      ? typeof l.reference?.value === "object"
+        ? l.reference.value?.uri
+        : null
+      : l.url
+  if (!raw || typeof raw !== "string" || /^[a-z]+:/i.test(raw)) return null
+  const path = ("/" + raw.replace(/^\/+/, "")).split("#")[0].split("?")[0]
+  return path.length > 1 ? path.replace(/\/$/, "") : path
+}
+
+function isActive(pathname: string, link?: NavItemLink | null, children?: Array<{ child: ChildItemType }> | null) {
+  const paths = [linkPath(link), ...(children || []).map(c => linkPath(c.child?.link))].filter(
+    (p): p is string => Boolean(p) && p !== "/"
+  )
+  return paths.some(p => pathname === p || pathname.startsWith(p + "/"))
+}
+
 export const HeaderNavigation: React.FC<HeaderNavigationProps> = ({ data, search, uris }) => {
-  const locale = localeFromPath(usePathname())
+  const pathname = usePathname() || "/"
+  const locale = localeFromPath(pathname)
   const navItems =
     pickLocalized<NonNullable<HeaderType["navItems"]>>(
       data as unknown as Record<string, unknown>,
@@ -50,9 +77,16 @@ export const HeaderNavigation: React.FC<HeaderNavigationProps> = ({ data, search
       <ul className="flex h-full flex-nowrap items-center gap-[14px] whitespace-nowrap">
         {navItems.map(({ item }, i: number) => {
           if (item?.hasDropdown && item?.subItems && item?.subItems?.length > 0) {
-            return <NavItemWithDropdown key={i} item={item} />
+            const subs = item.subItems as unknown as Array<{ child: ChildItemType }>
+            const active = isActive(pathname, item?.link, subs)
+            const rich = subs.some(c => c.child?.description || c.child?.group || c.child?.icon)
+            return rich ? (
+              <RichDropdown key={i} item={item} active={active} pathname={pathname} />
+            ) : (
+              <NavItemWithDropdown key={i} item={item} active={active} />
+            )
           }
-          return <NavItem key={i} link={item?.link} />
+          return <NavItem key={i} link={item?.link} active={isActive(pathname, item?.link)} />
         })}
         <li className="relative flex h-full items-center">
           <LanguageSwitch uris={uris} />
@@ -75,7 +109,7 @@ export const HeaderNavigation: React.FC<HeaderNavigationProps> = ({ data, search
  * Nav Item
  ****************************************************/
 
-const NavItem: React.FC<{ link: NavItemLink }> = ({ link }) => {
+const NavItem: React.FC<{ link: NavItemLink; active?: boolean }> = ({ link, active }) => {
   const isButton = link?.appearance === "button"
 
   return (
@@ -84,7 +118,7 @@ const NavItem: React.FC<{ link: NavItemLink }> = ({ link }) => {
         className={
           isButton
             ? "cursor-pointer no-underline"
-            : "text-dark hover:text-dark gap-content-xs flex h-full cursor-pointer items-center no-underline transition-colors duration-100"
+            : `agi-nav-link${active && !isButton ? " is-active" : ""} text-dark hover:text-dark gap-content-xs flex h-full cursor-pointer items-center no-underline transition-colors duration-100`
         }
         {...link}
       >
@@ -100,12 +134,13 @@ const NavItem: React.FC<{ link: NavItemLink }> = ({ link }) => {
 
 const NavItemWithDropdown: React.FC<{
   item: NonNullable<HeaderType["navItems"]>[number]["item"]
-}> = ({ item }) => {
+  active?: boolean
+}> = ({ item, active }) => {
   return (
     <li className="group relative flex h-full items-center">
       <CMSLink
         {...item?.link}
-        className="text-dark hover:text-dark flex h-full cursor-pointer items-center gap-0 no-underline transition-colors duration-100"
+        className={`agi-nav-link${active ? " is-active" : ""} text-dark hover:text-dark flex h-full cursor-pointer items-center gap-0 no-underline transition-colors duration-100`}
       >
         <span>{item?.link?.label}</span>
         <ChevronDown className="text-dark-600 ml-1 h-4 w-4 transition-transform duration-300 group-hover:rotate-180" />
@@ -127,6 +162,86 @@ const NavItemWithDropdown: React.FC<{
             })}
           </ul>
         </div>
+      </div>
+    </li>
+  )
+}
+
+/****************************************************
+ * Rich dropdown: icons, one-line descriptions, optional column
+ * headings (wide "mega" menu) and a highlight panel.
+ ****************************************************/
+
+const RichDropdown: React.FC<{
+  item: NonNullable<HeaderType["navItems"]>[number]["item"]
+  active?: boolean
+  pathname: string
+}> = ({ item, active, pathname }) => {
+  const subs = (item.subItems || []) as unknown as Array<{ child: ChildItemType }>
+  const groups: Array<{ name: string; items: ChildItemType[] }> = []
+  subs.forEach(({ child }) => {
+    const name = child?.group?.trim() || ""
+    let g = groups.find(x => x.name === name)
+    if (!g) groups.push((g = { name, items: [] }))
+    g.items.push(child)
+  })
+  const promo = (item as any).promo as
+    | { title?: string | null; text?: string | null; link?: NavItemLink | null }
+    | undefined
+  const hasPromo = Boolean(promo?.title || promo?.text)
+  const promoLink = promo?.link && linkPath(promo.link) !== null ? promo.link : null
+  const wide = groups.length > 1
+
+  return (
+    <li className="group relative flex h-full items-center">
+      <CMSLink
+        {...item?.link}
+        className={`agi-nav-link${active ? " is-active" : ""} text-dark hover:text-dark flex h-full cursor-pointer items-center gap-0 no-underline transition-colors duration-100`}
+      >
+        <span>{item?.link?.label}</span>
+        <ChevronDown className="text-dark-600 ml-1 h-4 w-4 transition-transform duration-300 group-hover:rotate-180" />
+      </CMSLink>
+      <div className="absolute top-full left-0 h-2 w-full" />
+      <div className={`agi-mega${wide ? " agi-mega--wide" : ""}${hasPromo ? " agi-mega--promo" : ""}`}>
+        <div className="agi-mega__cols">
+          {groups.map((g, gi) => (
+            <div key={gi} className="agi-mega__col">
+              {g.name ? <p className="agi-mega__heading">{g.name}</p> : null}
+              <ul>
+                {g.items.map((child, ci) => {
+                  const here = isActive(pathname, child.link)
+                  return (
+                    <li key={ci}>
+                      <CMSLink
+                        {...child.link}
+                        className={`agi-mega__link${here ? " is-active" : ""}`}
+                      >
+                        {child.icon ? <AgiIcon name={child.icon} className="agi-mega__icon" /> : null}
+                        <span className="agi-mega__text">
+                          <span className="agi-mega__label">{child.link?.label}</span>
+                          {child.description ? (
+                            <span className="agi-mega__desc">{child.description}</span>
+                          ) : null}
+                        </span>
+                      </CMSLink>
+                    </li>
+                  )
+                })}
+              </ul>
+            </div>
+          ))}
+        </div>
+        {hasPromo ? (
+          <div className="agi-mega__promo">
+            {promo?.title ? <p className="agi-mega__promo-title">{promo.title}</p> : null}
+            {promo?.text ? <p className="agi-mega__promo-text">{promo.text}</p> : null}
+            {promoLink ? (
+              <CMSLink {...promoLink} appearance="inline" className="agi-mega__promo-btn">
+                {promoLink?.label}
+              </CMSLink>
+            ) : null}
+          </div>
+        ) : null}
       </div>
     </li>
   )

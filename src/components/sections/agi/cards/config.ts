@@ -3,26 +3,8 @@ import type { Block } from "payload"
 import { sectionSettings } from "@/components/fields/section"
 import { link } from "@/components/fields/link/link"
 import { introFields } from "@/components/sections/agi/fields"
+import { ICON_OPTIONS } from "@/components/sections/agi/icon-options"
 
-/* Kept in sync with AGI_ICONS in ../icons.tsx (config must stay free of React imports). */
-const ICON_OPTIONS = [
-  { label: "Graduation cap", value: "graduation-cap" },
-  { label: "Book", value: "book-open" },
-  { label: "Globe", value: "globe" },
-  { label: "Languages", value: "languages" },
-  { label: "School", value: "school" },
-  { label: "People", value: "users" },
-  { label: "Care / support", value: "heart-handshake" },
-  { label: "Award", value: "award" },
-  { label: "Accredited / safe", value: "shield-check" },
-  { label: "Creative", value: "sparkles" },
-  { label: "Star", value: "star" },
-  { label: "Online / laptop", value: "laptop" },
-  { label: "Writing / exams", value: "pen-line" },
-  { label: "Young children", value: "baby" },
-  { label: "Calendar", value: "calendar-days" },
-  { label: "Location", value: "map-pin" },
-]
 
 export const Cards: Block = {
   slug: "cards",

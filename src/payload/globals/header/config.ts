@@ -2,6 +2,7 @@ import type { Field, GlobalConfig } from "payload"
 
 import { link } from "@/components/fields/link/link"
 import { afterHeaderChange } from "@/payload/hooks/globals/header/after-change"
+import { ICON_OPTIONS } from "@/components/sections/agi/icon-options"
 
 /* One navigation per language (see src/lib/locale.ts) */
 const navItemsField = (
@@ -26,6 +27,17 @@ const navItemsField = (
           label: "Has dropdown menu",
         },
         {
+          name: "promo",
+          type: "group",
+          label: "Highlight panel in the dropdown (optional)",
+          admin: { condition: (_, siblingData) => siblingData?.hasDropdown === true },
+          fields: [
+            { name: "title", type: "text", label: "Title" },
+            { name: "text", type: "textarea", label: "Text" },
+            link({ optional: true, overrides: { name: "link", label: "Button" } }),
+          ],
+        },
+        {
           name: "subItems",
           label: {
             singular: "Sub-menu item",
@@ -42,6 +54,29 @@ const navItemsField = (
               type: "group",
               fields: [
                 link(),
+                {
+                  type: "row",
+                  fields: [
+                    {
+                      name: "group",
+                      type: "text",
+                      label: "Column heading (optional)",
+                      admin: { description: "Items with the same heading are shown together in a wide menu." },
+                    },
+                    {
+                      name: "icon",
+                      type: "select",
+                      label: "Icon (optional)",
+                      options: ICON_OPTIONS,
+                    },
+                  ],
+                },
+                {
+                  name: "description",
+                  type: "text",
+                  label: "Short description (optional)",
+                  admin: { description: "One line under the link in the desktop menu." },
+                },
                 {
                   name: "hasChildren",
                   type: "checkbox",

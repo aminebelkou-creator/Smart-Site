@@ -71,7 +71,13 @@ export function PostCard(props: PostCardProps) {
             imgClassName="object-cover"
           />
         </div>
-      ) : null}
+      ) : (
+        /* No photo: an AGI-branded panel keeps every card the same shape. */
+        <div className="agi-post-card__media agi-post-card__placeholder relative aspect-[4/3] w-full overflow-hidden" aria-hidden>
+          <img src="/agi-seal.webp" alt="" className="agi-post-card__seal" loading="lazy" />
+          <span className="agi-post-card__ph-label">{String(resolvePostCategories(post)[0] ?? "") || "AGI Journal"}</span>
+        </div>
+      )}
 
       <div className="gap-content p-content md:p-content-lg flex flex-1 flex-col">
         <div className="agi-post-card__meta gap-content-sm flex flex-wrap items-center text-xs tracking-[0.18em] uppercase">

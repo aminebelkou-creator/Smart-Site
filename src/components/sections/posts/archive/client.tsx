@@ -174,7 +174,13 @@ function PostsArchiveCard(props: {
             className="object-cover"
           />
         </div>
-      ) : null}
+      ) : (
+        /* No photo: an AGI-branded panel keeps every card the same shape. */
+        <div className="agi-post-card__media agi-post-card__placeholder relative aspect-[4/3] w-full overflow-hidden" aria-hidden>
+          <img src="/agi-seal.webp" alt="" className="agi-post-card__seal" loading="lazy" />
+          <span className="agi-post-card__ph-label">{String((post as any).categories?.[0]?.title ?? (post as any).categories?.[0] ?? "") || "AGI Journal"}</span>
+        </div>
+      )}
 
       <div className="flex flex-1 flex-col gap-content p-content md:p-content-lg">
         <div className="agi-post-card__meta flex flex-wrap items-center gap-content-sm text-xs uppercase tracking-[0.18em]">

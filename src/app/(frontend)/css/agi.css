@@ -886,7 +886,7 @@ html[dir="rtl"] .agi-mnav__sub { padding: 8px 12px 8px 0; }
 }
 
 /* One form at a time (sections with class agi-form-panel; see form-panels.tsx) */
-html.agi-panels section.agi-form-panel:not(.is-active) { display: none; }
+html[data-agi-panels] section.agi-form-panel:not(.is-active) { display: none; }
 .agi-form-chooser .agi-card { position: relative; padding: 16px 18px; gap: 4px; }
 .agi-form-chooser .agi-card h3 { font-size: 18px; }
 .agi-form-chooser .agi-card p { font-size: 13px; line-height: 1.5; }

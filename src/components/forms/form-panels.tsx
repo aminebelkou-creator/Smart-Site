@@ -17,10 +17,10 @@ export function FormPanels() {
     const panels = Array.from(document.querySelectorAll<HTMLElement>("section.agi-form-panel"))
     const root = document.documentElement
     if (panels.length < 2) {
-      root.classList.remove("agi-panels")
+      delete root.dataset.agiPanels
       return
     }
-    root.classList.add("agi-panels")
+    root.dataset.agiPanels = "on"
 
     const ids = panels.map(p => p.id).filter(Boolean)
     const fromHash = () => decodeURIComponent(window.location.hash.slice(1)).split("/")[0]
@@ -52,7 +52,7 @@ export function FormPanels() {
     window.addEventListener("hashchange", onHash)
     return () => {
       window.removeEventListener("hashchange", onHash)
-      root.classList.remove("agi-panels")
+      delete root.dataset.agiPanels
     }
   }, [pathname])
 

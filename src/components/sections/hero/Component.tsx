@@ -159,7 +159,7 @@ export function HeroComponent(props: HeroBlock & { sideImage?: unknown; stickyCt
           aria-hidden="true"
         >
           {showBackgroundImage ? (
-            <Media resource={backgroundImage} fill imgClassName="object-cover" />
+            <Media resource={backgroundImage} fill imgClassName="object-cover" priority />
           ) : null}
 
           {isOverlay ? (

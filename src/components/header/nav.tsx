@@ -191,9 +191,24 @@ const RichDropdown: React.FC<{
   const hasPromo = Boolean(promo?.title || promo?.text)
   const promoLink = promo?.link && linkPath(promo.link) !== null ? promo.link : null
   const wide = groups.length > 1
+  const panelRef = React.useRef<HTMLDivElement>(null)
+  /* Keep the centred panel inside the viewport (Programs sits left of centre). */
+  const fit = React.useCallback(() => {
+    const panel = panelRef.current
+    const li = panel?.parentElement
+    if (!panel || !li) return
+    const vw = document.documentElement.clientWidth
+    const box = li.getBoundingClientRect()
+    const w = panel.offsetWidth
+    const centre = box.left + box.width / 2
+    let left = centre - w / 2
+    left = Math.min(Math.max(left, 16), vw - 16 - w)
+    const shift = Math.round(left - (centre - w / 2))
+    panel.style.setProperty("--agi-mega-shift", `${shift}px`)
+  }, [])
 
   return (
-    <li className="group relative flex h-full items-center">
+    <li className="group relative flex h-full items-center" onMouseEnter={fit} onFocus={fit}>
       <CMSLink
         {...item?.link}
         className={`agi-nav-link${active ? " is-active" : ""} text-dark hover:text-dark flex h-full cursor-pointer items-center gap-0 no-underline transition-colors duration-100`}
@@ -202,7 +217,7 @@ const RichDropdown: React.FC<{
         <ChevronDown className="text-dark-600 ml-1 h-4 w-4 transition-transform duration-300 group-hover:rotate-180" />
       </CMSLink>
       <div className="absolute top-full left-0 h-2 w-full" />
-      <div className={`agi-mega${wide ? " agi-mega--wide" : ""}${hasPromo ? " agi-mega--promo" : ""}`}>
+      <div ref={panelRef} className={`agi-mega${wide ? " agi-mega--wide" : ""}${hasPromo ? " agi-mega--promo" : ""}`}>
         <div className="agi-mega__cols">
           {groups.map((g, gi) => (
             <div key={gi} className="agi-mega__col">
